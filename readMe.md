@@ -25,3 +25,9 @@ pip install -r requirements.txt
 ```cmd
 python run.py
 ```
+
+## if you need to create requirement.txt
+
+```cmd
+pip freeze > requirement.txt
+```
