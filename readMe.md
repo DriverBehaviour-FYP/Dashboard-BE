@@ -23,5 +23,5 @@ pip install -r requirements.txt
 ## run project
 
 ```cmd
-python app.py
+python run.py
 ```
