@@ -1,4 +1,5 @@
 import pandas as pd
+from app.main.loaders.json_loader import load_json_path
 
 
 class Data:
@@ -13,6 +14,7 @@ class Data:
             cls._instance.__trips_data = pd.read_csv(f"./data/preprocessed/{version}/merged_trips_data.csv")
             cls._instance.__bus_stops = pd.read_csv("./data/preprocessed/common/bus_stops_654.csv")
             cls._instance.__bus_terminals = pd.read_csv("./data/preprocessed/common/bus_terminals_654.csv")
+            cls._instance.__metadata = load_json_path(f'./data/preprocessed/{version}/meta_data.json')
         return cls._instance
 
     def get_gps_data(self):
@@ -29,3 +31,6 @@ class Data:
 
     def get_bus_terminals_data(self):
         return self.__bus_terminals
+
+    def get_metadata(self):
+        return self.__metadata

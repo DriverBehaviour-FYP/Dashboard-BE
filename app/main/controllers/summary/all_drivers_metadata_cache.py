@@ -11,16 +11,14 @@ class AllDriverMetadata:
         self.__segments_data = Data().get_segments_data()
         self.__trips_data = Data().get_trips_data()
         self.__bus_stops = Data().get_bus_stops_data()
+        self.__metadata_f_file = Data().get_metadata()
         self.__data = self.__calculate_summary_metadata()
         self.__metadata_valid = True
 
     def __calculate_summary_metadata(self):
 
-        # load the data that can be loaded from a file
-        with open(f'./data/preprocessed/{self.__version}/meta_data.json', 'r') as f:
-            from_file = json.load(f)
         data = {
-            'routes': from_file['routes']
+            'routes': self.__metadata_f_file['routes']
         }
 
         # calculate no of trips

@@ -19,11 +19,11 @@ class AllDriverSummary:
             },
             'acceleration': {
                 'max': self.__segments_data['max_acceleration'].max(),
-                'avg': ((self.__segments_data['average_acceleration'] * (self.__segments_data['no_data_points'] - 1)).sum()/ len(self.__segments_data)) * -1
+                'avg': (self.__segments_data['average_acceleration'] * (self.__segments_data['no_data_points'] - 1)).sum()/ ((self.__segments_data['no_data_points'] - 1).sum())
             },
-            'deacceleration': {
+            'de-acceleration': {
                 'max':  self.__segments_data['max_deacceleration'].min() * -1,
-                'avg': (self.__segments_data['average_deacceleration'] * (self.__segments_data['no_data_points'] - 1)).sum()/ len(self.__segments_data)
+                'avg': ((self.__segments_data['average_deacceleration'] * (self.__segments_data['no_data_points'] - 1)).sum()/ ((self.__segments_data['no_data_points'] - 1).sum())) * -1
             },
             'trip-time': {
                 "min": self.__trips_data['duration_in_mins'].min(),

@@ -14,7 +14,10 @@ all_driver_metadata = AllDriverMetadata()
 @summary_api_blueprint.route('/api/summary/', methods=['GET'])
 def get_summary():
     summary_data = all_driver_summary.get_summary()
-    return jsonify(summary_data)
+    return jsonify({
+        'success': True,
+        **summary_data
+    })
 
 
 @summary_api_blueprint.route('/api/summary/metadata', methods=['GET'])
