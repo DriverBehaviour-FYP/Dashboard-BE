@@ -12,7 +12,7 @@ class TripController:
         self.__metadata_f_file = Data().get_metadata()
 
     def get_trip_metadata(self, trip_id):
-        trip = self.__trips_data[self.__trips_data['trip_id'] == trip_id][0]
+        trip = self.__trips_data[self.__trips_data['trip_id'] == trip_id].loc[0, :]
         segments = self.__segments_data[self.__segments_data['trip_id'] == trip_id]
 
         data = {
