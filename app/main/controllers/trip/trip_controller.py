@@ -37,12 +37,12 @@ class TripController:
             },
             "acceleration": {
                 "min": 0,
-                "avg": ((segments['average_acceleration'] * (segments['no_data_points'] - 1)).sum() / ((segments['no_data_points'] - 1).sum())),
+                "avg": ((segments['average_acceleration'] * (segments['no_acc_points'] - 1)).sum() / ((segments['no_acc_points'] - 1).sum())),
                 "max": segments['max_acceleration'].max(),
             },
             "de-acceleration": {
                 "min": 0,
-                "avg": ((segments['average_deacceleration'] * (segments['no_data_points'] - 1)).sum() / ((segments['no_data_points'] - 1).sum())) * -1,
+                "avg": ((segments['average_deacceleration'] * (segments['no_deacc_points'] - 1)).sum() / ((segments['no_deacc_points'] - 1).sum())) * -1,
                 "max": segments['max_deacceleration'].min() * -1,
             }
         }

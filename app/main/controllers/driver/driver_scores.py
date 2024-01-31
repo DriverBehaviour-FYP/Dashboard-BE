@@ -18,7 +18,7 @@ class DriverScore:
         filtered_df = self.__clusterdata[self.__clusterdata['deviceid'] == deviceid]
         cluster_counts = filtered_df['cluster'].value_counts().reset_index()
         cluster_counts.columns = ['cluster', 'count']
-        cluster_scores = {0: 100, 1: 80, 2: 20, 3: 10}
+        cluster_scores = {0: 100, 1: 80, 2: 10}
         weighted_score = (cluster_counts.apply(lambda row: cluster_scores.get(row['cluster'], 0) * row['count'], axis=1).sum() / sum(cluster_counts['count']))
         return weighted_score.round(2)
         # print(f"Device Score: {weighted_score:.2f} out of 100")

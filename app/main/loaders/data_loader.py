@@ -13,7 +13,7 @@ class Data:
             cls._instance.__segments_data = pd.read_csv(f"./data/preprocessed/{version}/merged_segments_data_10T.csv")
             cls._instance.__trips_data = pd.read_csv(f"./data/preprocessed/{version}/merged_trips_data.csv")
             cls._instance.__bus_stops = pd.read_csv("./data/preprocessed/common/bus_stops_654.csv")
-            cls._instance.__cluster_data = pd.read_csv(f"./data/preprocessed/{version}/PCA-3_K-4_speed.csv")
+            cls._instance.__cluster_data = pd.read_csv(f"./data/preprocessed/{version}/norms-clustering-results-original-f.csv")
             cls._instance.__bus_terminals = pd.read_csv("./data/preprocessed/common/bus_terminals_654.csv")
             cls._instance.__metadata = load_json_path(f'./data/preprocessed/{version}/meta_data.json')
         return cls._instance

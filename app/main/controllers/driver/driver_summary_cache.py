@@ -27,12 +27,12 @@ class DriverSummary:
             },
             "acceleration": {
                 "max": segments_temp['max_acceleration'].max(),
-                "avg": ((segments_temp['average_acceleration'] * (segments_temp['no_data_points'] - 1)).sum() / ((segments_temp['no_data_points'] - 1).sum())),
+                "avg": ((segments_temp['average_acceleration'] * (segments_temp['no_acc_points'] - 1)).sum() / ((segments_temp['no_acc_points'] - 1).sum())),
                 "min": 0
             },
             "de-acceleration": {
                 "max": segments_temp['max_deacceleration'].min() * -1,
-                "avg": ((segments_temp['average_deacceleration'] * (segments_temp['no_data_points'] - 1)).sum() / ((segments_temp['no_data_points'] - 1).sum())) * -1,
+                "avg": ((segments_temp['average_deacceleration'] * (segments_temp['no_deacc_points'] - 1)).sum() / ((segments_temp['no_deacc_points'] - 1).sum())) * -1,
                 "min": 0
             },
             "trip-time": {
