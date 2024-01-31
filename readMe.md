@@ -16,7 +16,7 @@ python -m venv venv
 ## install all packages
 
 ```cmd
-pip install -r requirements.txt
+pip install -r requirement.txt
 
 ```
 
