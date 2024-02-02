@@ -12,7 +12,7 @@ class TripController:
         self.__metadata_f_file = Data().get_metadata()
 
     def get_trip_metadata(self, trip_id):
-        trip = self.__trips_data[self.__trips_data['trip_id'] == trip_id][0]
+        trip = self.__trips_data[self.__trips_data['trip_id'] == trip_id].loc[0, :]
         segments = self.__segments_data[self.__segments_data['trip_id'] == trip_id]
 
         data = {
@@ -38,12 +38,12 @@ class TripController:
             "acceleration": {
                 "min": 0,
                 "avg": ((segments['average_acceleration'] * (segments['no_acc_points'] - 1)).sum() / ((segments['no_acc_points'] - 1).sum())),
-                "max": segments['max_acceleration'].max(),
+                "max": segments['average_acceleration'].max(),
             },
             "de-acceleration": {
                 "min": 0,
                 "avg": ((segments['average_deacceleration'] * (segments['no_deacc_points'] - 1)).sum() / ((segments['no_deacc_points'] - 1).sum())) * -1,
-                "max": segments['max_deacceleration'].min() * -1,
+                "max": segments['average_deacceleration'].min() * -1,
             }
         }
         return data

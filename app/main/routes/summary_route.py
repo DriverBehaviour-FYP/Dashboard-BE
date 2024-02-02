@@ -20,7 +20,7 @@ def get_summary():
     })
 
 
-@summary_api_blueprint.route('/api/summary/metadata', methods=['GET'])
+@summary_api_blueprint.route('/api/summary/metadata/', methods=['GET'])
 def get_summary_meta_data():
     metadata = all_driver_metadata.get_metadata()
     return jsonify({

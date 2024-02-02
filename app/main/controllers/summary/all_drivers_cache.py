@@ -18,11 +18,11 @@ class AllDriverSummary:
                 'avg': self.__gps_data['speed'].mean()
             },
             'acceleration': {
-                'max': self.__segments_data['max_acceleration'].max(),
+                'max': self.__segments_data['average_acceleration'].max(),
                 'avg': (self.__segments_data['average_acceleration'] * (self.__segments_data['no_acc_points'] - 1)).sum()/ ((self.__segments_data['no_acc_points'] - 1).sum())
             },
             'de-acceleration': {
-                'max':  self.__segments_data['max_deacceleration'].min() * -1,
+                'max':  self.__segments_data['average_deacceleration'].min() * -1,
                 'avg': ((self.__segments_data['average_deacceleration'] * (self.__segments_data['no_deacc_points'] - 1)).sum()/ ((self.__segments_data['no_deacc_points'] - 1).sum())) * -1
             },
             'trip-time': {
