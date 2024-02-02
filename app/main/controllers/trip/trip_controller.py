@@ -10,6 +10,7 @@ class TripController:
         self.__trips_data = Data().get_trips_data()
         self.__bus_stops = Data().get_bus_stops_data()
         self.__metadata_f_file = Data().get_metadata()
+        self.__clusterdata = Data().get_clusterdata()
 
     def get_trip_metadata(self, trip_id):
         trip = self.__trips_data[self.__trips_data['trip_id'] == trip_id][0]
@@ -37,7 +38,7 @@ class TripController:
             },
             "acceleration": {
                 "min": 0,
-                "avg": ((segments['average_acceleration'] * (segments['no_acc_points'] - 1)).sum() / ((segments['no_acc_points'] - 1).sum())),
+                "avg": ((segments['average_acceleration'] * (segments['no_data_points'] - 1)).sum() / ((segments['no_data_points'] - 1).sum())),
                 "max": segments['max_acceleration'].max(),
             },
             "de-acceleration": {
@@ -47,3 +48,15 @@ class TripController:
             }
         }
         return data
+    
+    def get_trip_behaviour(self, trip_id):
+        cluster_data = self.__clusterdata[(self.__clusterdata['trip_id'] == trip_id)]
+        gps_data = self.__gps_data[(self.__gps_data['trip_id'] == trip_id)]
+
+        merged_df = pd.merge(gps_data, cluster_data[['segment_id', 'cluster']], on='segment_id', how='left')
+
+        gps_data['cluster'] = merged_df['cluster']
+
+        response = gps_data.to_json(orient='records')
+
+        return response
