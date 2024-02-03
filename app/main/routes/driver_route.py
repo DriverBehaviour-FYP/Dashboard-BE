@@ -15,7 +15,7 @@ driver_summary = DriverSummary(version='10T')
 driver_score = DriverScore(version='10T')
 
 
-@driver_api_blueprint.route('/api/driver/<driver_id>', methods=['GET'])
+@driver_api_blueprint.route('/api/driver/summary/<driver_id>', methods=['GET'])
 def get_driver_summary(driver_id):
     driver_id = int(driver_id)
     summary = driver_summary.get_driver_summary(driver_id)
