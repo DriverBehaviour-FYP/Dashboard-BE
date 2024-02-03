@@ -1,12 +1,13 @@
 from flask import Flask, jsonify
 from app.main.router import register_routes
+from flask_cors import CORS
 
 # create flask app
 app = Flask(__name__)
-
 # Register the API blueprints
 app = register_routes(app)
 
+CORS(app)
 
 @app.errorhandler(404)
 def not_found_error(error):
