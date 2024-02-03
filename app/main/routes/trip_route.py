@@ -11,7 +11,7 @@ trip_score = TripScore()
 trip_api_blueprint = Blueprint("api/trip", __name__)
 
 
-@trip_api_blueprint.route('/api/trip/<trip_id>', methods=['GET'])
+@trip_api_blueprint.route('/api/trip/summary/<trip_id>', methods=['GET'])
 def get_trip_summary(trip_id):
     trip_id = int(trip_id)
     summary = trip_controller.get_trip_summary(trip_id)
