@@ -57,6 +57,6 @@ class TripController:
 
         gps_data['cluster'] = merged_df['cluster']
 
-        response = gps_data.to_json(orient='records')
+        response = gps_data.to_dict(orient='records')
 
         return response
