@@ -13,6 +13,7 @@ class AllDriverSummary:
 
     def __calculate_summary(self):
         data = {
+            "success": True,
             'speed': {
                 'max': self.__gps_data['speed'].max(),
                 'avg': self.__gps_data['speed'].mean()

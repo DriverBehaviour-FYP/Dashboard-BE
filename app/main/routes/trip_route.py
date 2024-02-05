@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify,make_response
 from app.main.controllers.trip.trip_scores import TripScore
 from app.main.controllers.trip.trip_controller import TripController
 
@@ -15,20 +15,22 @@ trip_api_blueprint = Blueprint("api/trip", __name__)
 def get_trip_summary(trip_id):
     trip_id = int(trip_id)
     summary = trip_controller.get_trip_summary(trip_id)
-    return jsonify({
-        "success": True,
-        **summary
-    })
+    if summary['success']:
+        return jsonify(summary)
+    else:
+        return make_response(jsonify(summary), summary['statusCode'])
 
 
 @trip_api_blueprint.route('/api/trip/metadata/<trip_id>', methods=['GET'])
 def get_trip_metadata(trip_id):
     trip_id = int(trip_id)
     metadata = trip_controller.get_trip_metadata(trip_id)
-    return jsonify({
-        "success": True,
-        **metadata
-    })
+
+    if metadata['success']:
+        return jsonify(metadata)
+    else:
+        return make_response(jsonify(metadata), metadata['statusCode'])
+
 
 @trip_api_blueprint.route('/api/trip/score/<device_id>', methods=['GET'])
 def get_trip_score(device_id):

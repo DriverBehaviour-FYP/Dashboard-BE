@@ -17,7 +17,12 @@ class DriverMetadata:
     def __calculate_driver_metadata(self, driver_id):
         temp_df = self.__trips_data[self.__trips_data['deviceid'] == driver_id]
 
+        temp_df.reset_index(inplace=True)
+        if len(temp_df) == 0:
+            return {"success": False, "errorMessage": "Driver not found!", "statusCode": 400}
+
         data = {
+            "success": True,
             "driver_id": driver_id,
             "no_of_trips": len(temp_df),
             "routes": self.__metadata_f_file['routes'],

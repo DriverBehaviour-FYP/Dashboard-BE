@@ -18,7 +18,15 @@ class DriverSummary:
         gps_data_temp = self.__gps_data[self.__gps_data['deviceid'] == driver_id]
         segments_temp = self.__segments_data[self.__segments_data['deviceid'] == driver_id]
 
+        trip_data_temp.reset_index(inplace=True)
+        gps_data_temp.reset_index(inplace=True)
+        segments_temp.reset_index(inplace=True)
+
+        if len(trip_data_temp) == 0 or len(gps_data_temp) == 0 or len(segments_temp) == 0:
+            return {"success": False, "errorMessage": "Driver not found!", "statusCode": 400}
+
         data = {
+            "success": True,
             "driver_id": driver_id,
             "speed": {
                 "max": gps_data_temp['speed'].max(),
