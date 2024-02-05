@@ -18,6 +18,7 @@ class AllDriverMetadata:
     def __calculate_summary_metadata(self):
 
         data = {
+            "success": True,
             'routes': self.__metadata_f_file['routes']
         }
 

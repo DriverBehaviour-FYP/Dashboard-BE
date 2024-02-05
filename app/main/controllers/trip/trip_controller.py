@@ -13,10 +13,17 @@ class TripController:
         self.__clusterdata = Data().get_clusterdata()
 
     def get_trip_metadata(self, trip_id):
-        trip = self.__trips_data[self.__trips_data['trip_id'] == trip_id].loc[0, :]
+        trips = self.__trips_data[self.__trips_data['trip_id'] == trip_id]
+        trips.reset_index(inplace=True)
+        if len(trips) == 0:
+            print("vent to failing route")
+            return {"success": False, "errorMessage": "Trip not found", "statusCode": 400}
+
+        trip = trips.loc[0, :]
         segments = self.__segments_data[self.__segments_data['trip_id'] == trip_id]
 
         data = {
+            "success": True,
             "trip_id": trip_id,
             "duration": trip['duration'],
             "date": trip['date'],
@@ -30,7 +37,12 @@ class TripController:
     def get_trip_summary(self, trip_id):
         segments = self.__segments_data[self.__segments_data['trip_id'] == trip_id]
 
+        segments.reset_index(inplace=True)
+        if len(segments) == 0:
+            return {"success": False, "errorMessage": "Trip not found!", "statusCode": 400}
+
         data = {
+            "success": True,
             "speed": {
                 "min": 0,
                 "avg": (segments['speed_mean'] * segments['no_data_points']).sum() / (segments['no_data_points'].sum()),

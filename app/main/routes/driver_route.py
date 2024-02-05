@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, make_response
 import numpy as np
 from app.main.controllers.driver.driver_metadata_cache import DriverMetadata
 from app.main.controllers.driver.driver_summary_cache import DriverSummary
@@ -19,20 +19,21 @@ driver_score = DriverScore(version='10T')
 def get_driver_summary(driver_id):
     driver_id = int(driver_id)
     summary = driver_summary.get_driver_summary(driver_id)
-    return jsonify({
-        "success": True,
-        **summary
-    })
+
+    if summary['success']:
+        return jsonify(summary)
+    else:
+        return make_response(summary, summary['statusCode'])
 
 
 @driver_api_blueprint.route('/api/driver/metadata/<driver_id>', methods=['GET'])
 def get_summary_meta_data(driver_id):
     driver_id = int(driver_id)
     metadata = driver_metadata.get_driver_metadata(driver_id=driver_id)
-    return jsonify({
-        'success': True,
-        **metadata
-    })
+    if metadata['success']:
+        return jsonify(metadata)
+    else:
+        return make_response(metadata, metadata['statusCode'])
 
 @driver_api_blueprint.route('/api/driver/score', methods=['GET'])
 def get_driver_scores():
