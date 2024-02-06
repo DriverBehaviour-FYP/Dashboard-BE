@@ -9,7 +9,7 @@ class Data:
         # Create a new instance only if it doesn't exist
         if not cls._instance:
             cls._instance = super().__new__(cls)
-            cls._instance.__gps_data = pd.read_csv(f"./data/preprocessed/{version}/merged_gps_data_10T.csv")
+            cls._instance.__gps_data = pd.read_csv(f"./data/preprocessed/{version}/merged_gps_data_1000M.csv")
             cls._instance.__segments_data = pd.read_csv(f"./data/preprocessed/{version}/merged_segments_data_10T.csv")
             cls._instance.__trips_data = pd.read_csv(f"./data/preprocessed/{version}/merged_trips_data.csv")
             cls._instance.__bus_stops = pd.read_csv("./data/preprocessed/common/bus_stops_654.csv")

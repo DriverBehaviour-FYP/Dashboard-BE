@@ -62,13 +62,11 @@ class TripController:
         return data
     
     def get_trip_behaviour(self, trip_id):
-        cluster_data = self.__clusterdata[(self.__clusterdata['trip_id'] == trip_id)]
-        gps_data = self.__gps_data[(self.__gps_data['trip_id'] == trip_id)]
-
+        cluster_data = self.__clusterdata[(self.__clusterdata['trip_id'] == trip_id)].reset_index()
+        gps_data = self.__gps_data[(self.__gps_data['trip_id'] == trip_id)].reset_index()
         merged_df = pd.merge(gps_data, cluster_data[['segment_id', 'cluster']], on='segment_id', how='left')
-
+        # merged_df['cluster'] = merged_df.groupby('segment_id')['cluster'].ffill()
         gps_data['cluster'] = merged_df['cluster']
 
         response = gps_data.to_dict(orient='records')
-
         return response
