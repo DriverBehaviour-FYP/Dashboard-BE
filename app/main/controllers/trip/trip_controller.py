@@ -1,5 +1,6 @@
 import pandas as pd
 from app.main.loaders.data_loader import Data
+import time
 
 
 class TripController:
@@ -60,7 +61,26 @@ class TripController:
             }
         }
         return data
-    
+
+    def __calculate_split_points(self, gps_data):
+
+        gps_data.reset_index(inplace=True)
+
+        split_points = []
+        previous_row = None
+        for index, row in gps_data.iterrows():
+            if index == 0 or index == len(gps_data)-1:
+                split_points.append({"longitude": row['longitude'], 'latitude': row['latitude']})
+            if (previous_row is not None) and row['segment_id'] != previous_row['segment_id']:
+                split_points.append(
+                    {
+                        "longitude": (row['longitude'] + previous_row['longitude'])/2,
+                        "latitude": (row['latitude'] + previous_row['latitude'])/ 2,
+                     })
+            previous_row = row
+            df = pd.DataFrame(split_points)
+        return df.to_dict(orient='records')
+
     def get_trip_behaviour(self, trip_id):
         cluster_data = self.__clusterdata[(self.__clusterdata['trip_id'] == trip_id)].reset_index()
         gps_data = self.__gps_data[(self.__gps_data['trip_id'] == trip_id)].reset_index()
@@ -68,5 +88,8 @@ class TripController:
         # merged_df['cluster'] = merged_df.groupby('segment_id')['cluster'].ffill()
         gps_data['cluster'] = merged_df['cluster']
 
-        response = gps_data.to_dict(orient='records')
+        response = {
+            "gps": gps_data.to_dict(orient='records'),
+            "split_points": self.__calculate_split_points(gps_data),
+        }
         return response
