@@ -1,14 +1,15 @@
 from flask import Blueprint, jsonify
 from app.main.controllers.summary.all_drivers_cache import AllDriverSummary
 from app.main.controllers.summary.all_drivers_metadata_cache import AllDriverMetadata
+from config.main_config import VERSION
 
 summary_api_blueprint = Blueprint("api/summary", __name__)
 
 global all_driver_summary
 global all_driver_metadata
 
-all_driver_summary = AllDriverSummary()
-all_driver_metadata = AllDriverMetadata()
+all_driver_summary = AllDriverSummary(version=VERSION)
+all_driver_metadata = AllDriverMetadata(version=VERSION)
 
 
 @summary_api_blueprint.route('/api/alldrivers/summary/', methods=['GET'])

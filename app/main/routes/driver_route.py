@@ -3,6 +3,7 @@ import numpy as np
 from app.main.controllers.driver.driver_metadata_cache import DriverMetadata
 from app.main.controllers.driver.driver_summary_cache import DriverSummary
 from app.main.controllers.driver.driver_scores import DriverScore
+from config.main_config import VERSION
 
 driver_api_blueprint = Blueprint("api/driver", __name__)
 
@@ -10,9 +11,9 @@ global driver_metadata;
 global driver_summary;
 global driver_score;
 
-driver_metadata = DriverMetadata(version='10T')
-driver_summary = DriverSummary(version='10T')
-driver_score = DriverScore(version='10T')
+driver_metadata = DriverMetadata(version=VERSION)
+driver_summary = DriverSummary(version=VERSION)
+driver_score = DriverScore(version=VERSION)
 
 
 @driver_api_blueprint.route('/api/driver/summary/<driver_id>', methods=['GET'])

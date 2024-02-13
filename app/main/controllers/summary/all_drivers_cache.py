@@ -1,5 +1,6 @@
 import pandas as pd
 from app.main.loaders.data_loader import Data
+from config.main_config import AGGRESSIVE, NORMAL, SAFE
 
 
 class AllDriverSummary:
@@ -20,16 +21,25 @@ class AllDriverSummary:
             },
             'acceleration': {
                 'max': self.__segments_data['average_acceleration'].max(),
-                'avg': (self.__segments_data['average_acceleration'] * (self.__segments_data['no_acc_points'] - 1)).sum()/ ((self.__segments_data['no_acc_points'] - 1).sum())
+                'avg': (self.__segments_data['average_acceleration'] * (
+                            self.__segments_data['no_acc_points'] - 1)).sum() / (
+                           (self.__segments_data['no_acc_points'] - 1).sum())
             },
             'de-acceleration': {
-                'max':  self.__segments_data['average_deacceleration'].min() * -1,
-                'avg': ((self.__segments_data['average_deacceleration'] * (self.__segments_data['no_deacc_points'] - 1)).sum()/ ((self.__segments_data['no_deacc_points'] - 1).sum())) * -1
+                'max': self.__segments_data['average_deacceleration'].min() * -1,
+                'avg': ((self.__segments_data['average_deacceleration'] * (
+                            self.__segments_data['no_deacc_points'] - 1)).sum() / (
+                            (self.__segments_data['no_deacc_points'] - 1).sum())) * -1
             },
             'trip-time': {
                 "min": self.__trips_data['duration_in_mins'].min(),
                 "avg": self.__trips_data['duration_in_mins'].mean(),
                 "max": self.__trips_data['duration_in_mins'].max()
+            },
+            'cluster-summary': {
+                "aggressive": len(self.__segments_data[self.__segments_data['cluster'] == AGGRESSIVE]),
+                "normal": len(self.__segments_data[self.__segments_data['cluster'] == NORMAL]),
+                "safe": len(self.__segments_data[self.__segments_data['cluster'] == SAFE]),
             }
         }
         return data
@@ -41,4 +51,3 @@ class AllDriverSummary:
             self.__data = self.__calculate_summary()
             self.__summary_valid = True
             return self.__data
-

@@ -1,12 +1,13 @@
-from flask import Blueprint, jsonify,make_response
+from flask import Blueprint, jsonify,make_response, request
 from app.main.controllers.trip.trip_scores import TripScore
 from app.main.controllers.trip.trip_controller import TripController
+from config.main_config import VERSION
 
 global trip_controller;
 global trip_score;
 
-trip_controller = TripController()
-trip_score = TripScore()
+trip_controller = TripController(version=VERSION)
+trip_score = TripScore(version=VERSION)
 
 trip_api_blueprint = Blueprint("api/trip", __name__)
 
