@@ -2,6 +2,13 @@ import pandas as pd
 from app.main.loaders.json_loader import load_json_path
 
 
+def load_and_convert(path):
+    data = pd.read_csv(path)
+    if 'date' in data.columns:
+        data['date'] = pd.to_datetime(data['date'])
+    return data
+
+
 class Data:
     _instance = None  # Class variable to store the single instance
 
@@ -9,12 +16,12 @@ class Data:
         # Create a new instance only if it doesn't exist
         if not cls._instance:
             cls._instance = super().__new__(cls)
-            cls._instance.__gps_data = pd.read_csv(f"./data/preprocessed/{version}/merged_gps_data_{version}.csv")
-            cls._instance.__segments_data = pd.read_csv(f"./data/preprocessed/{version}/merged_segments_data_{version}.csv")
-            cls._instance.__trips_data = pd.read_csv(f"./data/preprocessed/common/merged_trips_data.csv")
-            cls._instance.__bus_stops = pd.read_csv("./data/preprocessed/common/bus_stops_654.csv")
-            cls._instance.__cluster_data = pd.read_csv(f"./data/preprocessed/{version}/merged_cluster_data_{version}.csv")
-            cls._instance.__bus_terminals = pd.read_csv("./data/preprocessed/common/bus_terminals_654.csv")
+            cls._instance.__gps_data = load_and_convert(f"./data/preprocessed/{version}/merged_gps_data_{version}.csv")
+            cls._instance.__segments_data = load_and_convert(f"./data/preprocessed/{version}/merged_segments_data_{version}.csv")
+            cls._instance.__trips_data = load_and_convert(f"./data/preprocessed/common/merged_trips_data.csv")
+            cls._instance.__bus_stops = load_and_convert("./data/preprocessed/common/bus_stops_654.csv")
+            cls._instance.__cluster_data = load_and_convert(f"./data/preprocessed/{version}/merged_cluster_data_{version}.csv")
+            cls._instance.__bus_terminals = load_and_convert("./data/preprocessed/common/bus_terminals_654.csv")
             cls._instance.__metadata = load_json_path(f'./data/preprocessed/{version}/meta_data_{version}.json')
         return cls._instance
 

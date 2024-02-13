@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, make_response
+from flask import Blueprint, jsonify, make_response, request
 import numpy as np
 from app.main.controllers.driver.driver_metadata_cache import DriverMetadata
 from app.main.controllers.driver.driver_summary_cache import DriverSummary
@@ -16,10 +16,15 @@ driver_summary = DriverSummary(version=VERSION)
 driver_score = DriverScore(version=VERSION)
 
 
-@driver_api_blueprint.route('/api/driver/summary/<driver_id>', methods=['GET'])
+@driver_api_blueprint.route('/api/driver/summary/<driver_id>', methods=['POST'])
 def get_driver_summary(driver_id):
     driver_id = int(driver_id)
-    summary = driver_summary.get_driver_summary(driver_id)
+    req_body = request.get_json()
+
+    start_date = req_body.get('start-date')
+    end_date = req_body.get('end-date')
+
+    summary = driver_summary.get_driver_summary(driver_id, start_date, end_date)
 
     if summary['success']:
         return jsonify(summary)
@@ -27,10 +32,15 @@ def get_driver_summary(driver_id):
         return make_response(summary, summary['statusCode'])
 
 
-@driver_api_blueprint.route('/api/driver/metadata/<driver_id>', methods=['GET'])
+@driver_api_blueprint.route('/api/driver/metadata/<driver_id>', methods=['POST'])
 def get_summary_meta_data(driver_id):
     driver_id = int(driver_id)
-    metadata = driver_metadata.get_driver_metadata(driver_id=driver_id)
+    req_body = request.get_json()
+
+    start_date = req_body.get('start-date')
+    end_date = req_body.get('end-date')
+
+    metadata = driver_metadata.get_driver_metadata(driver_id, start_date, end_date)
     if metadata['success']:
         return jsonify(metadata)
     else:
