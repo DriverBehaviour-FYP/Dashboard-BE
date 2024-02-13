@@ -1,6 +1,6 @@
 import pandas as pd
 from app.main.loaders.data_loader import Data
-import time
+from config.main_config import AGGRESSIVE, NORMAL, SAFE
 
 
 class TripController:
@@ -58,6 +58,11 @@ class TripController:
                 "min": 0,
                 "avg": ((segments['average_deacceleration'] * (segments['no_deacc_points'] - 1)).sum() / ((segments['no_deacc_points'] - 1).sum())) * -1,
                 "max": segments['average_deacceleration'].min() * -1,
+            },
+            "cluster-summary": {
+                "aggressive": len(segments[segments['cluster'] == AGGRESSIVE]),
+                "normal": len(segments[segments['cluster'] == NORMAL]),
+                "safe": len(segments[segments['cluster'] == SAFE]),
             }
         }
         return data

@@ -5,17 +5,17 @@ from app.main.loaders.json_loader import load_json_path
 class Data:
     _instance = None  # Class variable to store the single instance
 
-    def __new__(cls, version='10T'):
+    def __new__(cls, version='1000M'):
         # Create a new instance only if it doesn't exist
         if not cls._instance:
             cls._instance = super().__new__(cls)
-            cls._instance.__gps_data = pd.read_csv(f"./data/preprocessed/{version}/merged_gps_data_1000M.csv")
-            cls._instance.__segments_data = pd.read_csv(f"./data/preprocessed/{version}/merged_segments_data_10T.csv")
-            cls._instance.__trips_data = pd.read_csv(f"./data/preprocessed/{version}/merged_trips_data.csv")
+            cls._instance.__gps_data = pd.read_csv(f"./data/preprocessed/{version}/merged_gps_data_{version}.csv")
+            cls._instance.__segments_data = pd.read_csv(f"./data/preprocessed/{version}/merged_segments_data_{version}.csv")
+            cls._instance.__trips_data = pd.read_csv(f"./data/preprocessed/common/merged_trips_data.csv")
             cls._instance.__bus_stops = pd.read_csv("./data/preprocessed/common/bus_stops_654.csv")
-            cls._instance.__cluster_data = pd.read_csv(f"./data/preprocessed/{version}/norms-clustering-results-original-f.csv")
+            cls._instance.__cluster_data = pd.read_csv(f"./data/preprocessed/{version}/merged_cluster_data_{version}.csv")
             cls._instance.__bus_terminals = pd.read_csv("./data/preprocessed/common/bus_terminals_654.csv")
-            cls._instance.__metadata = load_json_path(f'./data/preprocessed/{version}/meta_data.json')
+            cls._instance.__metadata = load_json_path(f'./data/preprocessed/{version}/meta_data_{version}.json')
         return cls._instance
 
     def get_gps_data(self):

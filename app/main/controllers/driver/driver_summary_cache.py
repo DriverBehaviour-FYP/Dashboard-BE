@@ -1,5 +1,6 @@
 import pandas as pd
 from app.main.loaders.data_loader import Data
+from config.main_config import AGGRESSIVE, NORMAL, SAFE
 
 
 class DriverSummary:
@@ -47,6 +48,11 @@ class DriverSummary:
                 "min": trip_data_temp['duration_in_mins'].min(),
                 "avg": trip_data_temp['duration_in_mins'].mean(),
                 "max": trip_data_temp['duration_in_mins'].max()
+            },
+            "cluster-summary": {
+                "aggressive": len(segments_temp[segments_temp['cluster'] == AGGRESSIVE]),
+                "normal": len(segments_temp[segments_temp['cluster'] == NORMAL]),
+                "safe": len(segments_temp[segments_temp['cluster'] == SAFE]),
             }
         }
         self.__data[driver_id] = data
