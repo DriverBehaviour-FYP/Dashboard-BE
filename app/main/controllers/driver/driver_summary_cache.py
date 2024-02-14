@@ -39,8 +39,8 @@ class DriverSummary:
         data = {
             "success": True,
             "driver_id": driver_id,
-            "start-date": start_date.strftime("%Y-%m-%d"),
-            "end-date": end_date.strftime("%Y-%m-%d"),
+            "selected-start-date": start_date.strftime("%Y-%m-%d"),
+            "selected-end-date": end_date.strftime("%Y-%m-%d"),
             "speed": {
                 "max": gps_data_temp['speed'].max(),
                 "avg": gps_data_temp['speed'].mean(),
