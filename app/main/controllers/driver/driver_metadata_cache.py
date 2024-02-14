@@ -1,6 +1,7 @@
 import pandas as pd
 from app.main.loaders.data_loader import Data
 import json
+from datetime import datetime as d
 
 
 def refine_dates(start_date, end_date):
@@ -37,8 +38,8 @@ class DriverMetadata:
             "data-collection-start-date": temp_df['date'].min(),
             "data-collection-end-date": temp_df['date'].max(),
             "data-collection-period": (pd.to_datetime(temp_df['date'].max()) - pd.to_datetime(temp_df['date'].min())).days,
-            "start-date": start_date.strftime("%Y-%m-%d"),
-            "end-date": end_date.strftime("%Y-%m-%d")
+            "selected-start-date": start_date.strftime("%Y-%m-%d"),
+            "selected-end-date": end_date.strftime("%Y-%m-%d")
         }
 
         return data
