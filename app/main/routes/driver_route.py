@@ -7,9 +7,9 @@ from config.main_config import VERSION
 
 driver_api_blueprint = Blueprint("api/driver", __name__)
 
-global driver_metadata;
-global driver_summary;
-global driver_score;
+global driver_metadata
+global driver_summary
+global driver_score
 
 driver_metadata = DriverMetadata(version=VERSION)
 driver_summary = DriverSummary(version=VERSION)
@@ -45,6 +45,7 @@ def get_summary_meta_data(driver_id):
         return jsonify(metadata)
     else:
         return make_response(metadata, metadata['statusCode'])
+
 
 @driver_api_blueprint.route('/api/driver/score', methods=['GET'])
 def get_driver_scores():
