@@ -1,13 +1,6 @@
 import pandas as pd
 from app.main.loaders.data_loader import Data
-import json
-from datetime import datetime as d
 
-
-def refine_dates(start_date, end_date):
-    start_date = pd.to_datetime(start_date) if start_date else pd.to_datetime("2021-10-01")
-    end_date = pd.to_datetime(end_date) if end_date else pd.to_datetime(d.now().strftime("%Y-%m-%d"))
-    return start_date, end_date
 
 
 class DriverMetadata:
@@ -21,7 +14,7 @@ class DriverMetadata:
         self.__metadata_valid = True
 
     def __calculate_driver_metadata(self, driver_id, start=None, end=None):
-        start_date, end_date = refine_dates(start, end)
+        start_date, end_date = self.refine_dates(start, end)
         temp_df = self.__trips_data[(self.__trips_data['deviceid'] == driver_id) & (self.__trips_data['date'] >= start_date) & (self.__trips_data['date'] <= end_date)]
 
         temp_df.reset_index(inplace=True)
@@ -46,4 +39,9 @@ class DriverMetadata:
 
     def get_driver_metadata(self, driver_id, start_date, end_date):
         return self.__calculate_driver_metadata(driver_id, start_date, end_date)
+
+    def refine_dates(self, start_date, end_date):
+        start_date = pd.to_datetime(start_date) if start_date else pd.to_datetime(self.__metadata_f_file['data-collection-start-date'])
+        end_date = pd.to_datetime(end_date) if end_date else pd.to_datetime(self.__metadata_f_file['data-collection-end-date'])
+        return start_date, end_date
 

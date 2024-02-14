@@ -1,13 +1,6 @@
 import pandas as pd
 from app.main.loaders.data_loader import Data
 from config.main_config import AGGRESSIVE, NORMAL, SAFE
-from datetime import datetime as d
-
-
-def refine_dates(start_date, end_date):
-    start_date = pd.to_datetime(start_date) if start_date else pd.to_datetime("2021-10-01")
-    end_date = pd.to_datetime(end_date) if end_date else pd.to_datetime(d.now().strftime("%Y-%m-%d"))
-    return start_date, end_date
 
 
 class DriverSummary:
@@ -22,7 +15,7 @@ class DriverSummary:
 
     def __calculate_driver_summary(self, driver_id, start=None, end=None):
 
-        start_date, end_date = refine_dates(start, end)
+        start_date, end_date = self.refine_dates(start, end)
         trip_data_temp = self.__trips_data[(self.__trips_data['deviceid'] == driver_id) & (self.__trips_data['date'] >= start_date) & (self.__trips_data['date'] <= end_date)]
         gps_data_temp = self.__gps_data[(self.__gps_data['deviceid'] == driver_id) & (self.__gps_data['date'] >= start_date) & (self.__gps_data['date'] <= end_date)]
         segments_temp = self.__segments_data[(self.__segments_data['deviceid'] == driver_id) & (self.__segments_data['date'] >= start_date) & (self.__segments_data['date'] <= end_date)]
@@ -65,11 +58,18 @@ class DriverSummary:
                 "aggressive": len(segments_temp[segments_temp['cluster'] == AGGRESSIVE]),
                 "normal": len(segments_temp[segments_temp['cluster'] == NORMAL]),
                 "safe": len(segments_temp[segments_temp['cluster'] == SAFE]),
-            }
+            },
+            "start-date": self.__metadata_f_file['data-collection-start-date'],
+            "end-date": self.__metadata_f_file['data-collection-end-date']
         }
         return data
 
     def get_driver_summary(self, driver_id, start_date, end_date):
         return self.__calculate_driver_summary(driver_id, start_date, end_date)
+
+    def refine_dates(self, start_date, end_date):
+        start_date = pd.to_datetime(start_date) if start_date else pd.to_datetime(self.__metadata_f_file['data-collection-start-date'])
+        end_date = pd.to_datetime(end_date) if end_date else pd.to_datetime(self.__metadata_f_file['data-collection-end-date'])
+        return start_date, end_date
 
 
