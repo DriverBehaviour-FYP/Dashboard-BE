@@ -25,9 +25,9 @@ class TripController:
 
         data = {
             "success": True,
-            "trip_id": trip_id,
+            "trip-id": trip_id,
             "duration": trip['duration'],
-            "date": trip['date'],
+            "date": trip['date'].strftime("%Y-%m-%d"),
             "start-time": trip['start_time'],
             "end-time": trip['end_time'],
             "no-segments": len(segments),

@@ -30,7 +30,7 @@ class AllDriverMetadata:
 
         # calculate no of different drivers
         no_of_drivers = len(gps_data['deviceid'].unique())
-        data['no_of_drivers'] = no_of_drivers
+        data['no-of-drivers'] = no_of_drivers
 
         # data collection period
         data['data-collection-start-date'] = self.__metadata_f_file['data-collection-start-date']
