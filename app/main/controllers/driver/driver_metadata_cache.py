@@ -28,8 +28,8 @@ class DriverMetadata:
             "driver-id": driver_id,
             "no-of-trips": len(temp_df),
             "routes": self.__metadata_f_file['routes'],
-            "data-collection-start-date": self.__metadata_f_file['data-callection-start-date'],
-            "data-collection-end-date": self.__metadata_f_file['data-callection-end-date'],
+            "data-collection-start-date": self.__metadata_f_file['data-collection-start-date'],
+            "data-collection-end-date": self.__metadata_f_file['data-collection-end-date'],
             "data-collection-period": (pd.to_datetime(temp_df['date'].max()) - pd.to_datetime(temp_df['date'].min())).days,
             "selected-start-date": start_date.strftime("%Y-%m-%d"),
             "selected-end-date": end_date.strftime("%Y-%m-%d")
