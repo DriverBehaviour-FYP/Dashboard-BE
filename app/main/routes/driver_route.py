@@ -47,9 +47,14 @@ def get_summary_meta_data(driver_id):
         return make_response(metadata, metadata['statusCode'])
 
 
-@driver_api_blueprint.route('/api/driver/score', methods=['GET'])
+@driver_api_blueprint.route('/api/driver/score', methods=['POST'])
 def get_driver_scores():
-    scores = driver_score.getScoresOfDrivers()
+    req_body = request.get_json()
+
+    start_date = req_body.get('start-date')
+    end_date = req_body.get('end-date')
+
+    scores = driver_score.getScoresOfDrivers(start_date, end_date)
     scores['deviceid'] = [int(x) for x in scores['deviceid']]
-    print(scores)
+    # print(scores)
     return jsonify(scores)
