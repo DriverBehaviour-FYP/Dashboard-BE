@@ -33,10 +33,15 @@ def get_trip_metadata(trip_id):
         return make_response(jsonify(metadata), metadata['statusCode'])
 
 
-@trip_api_blueprint.route('/api/trip/score/<device_id>', methods=['GET'])
+@trip_api_blueprint.route('/api/trip/score/<device_id>', methods=['POST'])
 def get_trip_score(device_id):
     device_id = int(device_id)
-    trip_scores = trip_score.getScoresOfTrips(device_id)
+    req_body = request.get_json()
+
+    start_date = req_body.get('start-date')
+    end_date = req_body.get('end-date')
+
+    trip_scores = trip_score.getScoresOfTrips(device_id, start_date, end_date)
     trip_scores['trip_id'] = [int(x) for x in trip_scores['trip_id']]
     return jsonify({
         "success": True,
