@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, make_response, request
 import numpy as np
 from app.main.controllers.driver.driver_metadata_cache import DriverMetadata
 from app.main.controllers.driver.driver_summary_cache import DriverSummary
+from app.main.controllers.driver.driver_dwell_times import DriverDwellTimes
 from app.main.controllers.driver.driver_scores import DriverScore
 from config.main_config import VERSION
 
@@ -10,10 +11,12 @@ driver_api_blueprint = Blueprint("api/driver", __name__)
 global driver_metadata
 global driver_summary
 global driver_score
+global driver_dwell_times
 
 driver_metadata = DriverMetadata(version=VERSION)
 driver_summary = DriverSummary(version=VERSION)
 driver_score = DriverScore(version=VERSION)
+driver_dwell_times = DriverDwellTimes(version=VERSION)
 
 
 @driver_api_blueprint.route('/api/driver/summary/<driver_id>', methods=['POST'])
@@ -58,3 +61,21 @@ def get_driver_scores():
     scores['deviceid'] = [int(x) for x in scores['deviceid']]
     # print(scores)
     return jsonify(scores)
+
+
+@driver_api_blueprint.route('/api/driver/dwelltime/<driver_id>', methods=['POST'])
+def get_driver_dwell_times(driver_id):
+    driver_id = int(driver_id)
+    req_body = request.get_json()
+
+    start_date = req_body.get('start-date')
+    end_date = req_body.get('end-date')
+
+    dwell_times = driver_dwell_times.get_driver_dwell_times(driver_id, start_date, end_date)
+
+    if dwell_times['success']:
+        return jsonify(dwell_times)
+    else:
+        return make_response(dwell_times, dwell_times['statusCode'])
+
+
