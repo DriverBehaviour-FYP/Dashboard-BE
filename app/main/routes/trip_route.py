@@ -57,3 +57,14 @@ def get_trip_gps(trip_id):
         "success": True,
         **trip_behaviour
     })
+
+
+@trip_api_blueprint.route('/api/trip/dwelltime/<trip_id>', methods=['GET'])
+def get_trip_dwell_times(trip_id):
+    trip_id = int(trip_id)
+    metadata = trip_controller.get_trip_dwell_times(trip_id)
+
+    if metadata['success']:
+        return jsonify(metadata)
+    else:
+        return make_response(jsonify(metadata), metadata['statusCode'])
