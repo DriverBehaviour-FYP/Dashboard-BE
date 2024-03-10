@@ -13,6 +13,7 @@ class TripController:
         self.__metadata_f_file = Data().get_metadata()
         self.__clusterdata = Data().get_clusterdata()
         self.__dwell_times = Data().get_dwell_times()
+        self.__speed_at_zones = Data().get_speed_at_zones()
 
     def get_trip_metadata(self, trip_id):
         trips = self.__trips_data[self.__trips_data['trip_id'] == trip_id]
@@ -109,6 +110,23 @@ class TripController:
 
         # Renaming columns for clarity if necessary
         grouped_df.columns = ['bus_stop_no', 'average_dwell_time']
+
+        return {
+            "data": grouped_df.to_dict(orient='records'),
+            "success": True
+        }
+
+    def get_speed_at_zones(self, trip_id):
+        speed_at_zones = self.__speed_at_zones[self.__speed_at_zones['trip_id'] == trip_id]
+
+        speed_at_zones = speed_at_zones[speed_at_zones['zone'] % 1 != 0]
+
+        grouped_df = speed_at_zones.groupby(['zone']).agg(
+            average_dwell_time=('speed', 'mean')
+        ).reset_index()
+
+        # Renaming columns for clarity if necessary
+        grouped_df.columns = ['zone', 'average_speed']
 
         return {
             "data": grouped_df.to_dict(orient='records'),

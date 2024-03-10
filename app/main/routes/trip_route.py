@@ -62,9 +62,20 @@ def get_trip_gps(trip_id):
 @trip_api_blueprint.route('/api/trip/dwelltime/<trip_id>', methods=['GET'])
 def get_trip_dwell_times(trip_id):
     trip_id = int(trip_id)
-    metadata = trip_controller.get_trip_dwell_times(trip_id)
+    dwell_times = trip_controller.get_trip_dwell_times(trip_id)
 
-    if metadata['success']:
-        return jsonify(metadata)
+    if dwell_times['success']:
+        return jsonify(dwell_times)
     else:
-        return make_response(jsonify(metadata), metadata['statusCode'])
+        return make_response(jsonify(dwell_times), dwell_times['statusCode'])
+
+
+@trip_api_blueprint.route('/api/trip/speedatzones/<trip_id>', methods=['GET'])
+def get_trip_speed_at_zones(trip_id):
+    trip_id = int(trip_id)
+    speeds = trip_controller.get_speed_at_zones(trip_id)
+
+    if speeds['success']:
+        return jsonify(speeds)
+    else:
+        return make_response(jsonify(speeds), speeds['statusCode'])
