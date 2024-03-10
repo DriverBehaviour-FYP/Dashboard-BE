@@ -12,6 +12,7 @@ class TripController:
         self.__bus_stops = Data().get_bus_stops_data()
         self.__metadata_f_file = Data().get_metadata()
         self.__clusterdata = Data().get_clusterdata()
+        self.__dwell_times = Data().get_dwell_times()
 
     def get_trip_metadata(self, trip_id):
         trips = self.__trips_data[self.__trips_data['trip_id'] == trip_id]
@@ -98,3 +99,18 @@ class TripController:
             "split_points": self.__calculate_split_points(gps_data),
         }
         return response
+
+    def get_trip_dwell_times(self, trip_id):
+        dwell_times = self.__dwell_times[self.__dwell_times['trip_id'] == trip_id]
+
+        grouped_df = dwell_times.groupby(['bus_stop']).agg(
+            average_dwell_time=('dwell_time_in_seconds', 'mean')
+        ).reset_index()
+
+        # Renaming columns for clarity if necessary
+        grouped_df.columns = ['bus_stop_no', 'average_dwell_time']
+
+        return {
+            "data": grouped_df.to_dict(orient='records'),
+            "success": True
+        }

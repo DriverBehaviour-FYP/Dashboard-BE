@@ -16,14 +16,82 @@ class AllDriverDwellTime:
         start_date, end_date = self.refine_dates(start, end)
         dwell_times = self.__dwell_times[(self.__dwell_times['date'] >= start_date) & (self.__dwell_times['date'] <= end_date)]
 
-        grouped_df = dwell_times.groupby(['deviceid', 'bus_stop']).agg(
+        grouped_df = dwell_times.groupby(['deviceid', 'bus_stop', 'direction']).agg(
             average_dwell_time=('dwell_time_in_seconds', 'mean')
         ).reset_index()
 
         # Renaming columns for clarity if necessary
-        grouped_df.columns = ['deviceid', 'bus_stop_no', 'average_dwell_time']
+        grouped_df.columns = ['deviceid', 'bus_stop_no', 'direction', 'average_dwell_time']
 
-        return {"data": grouped_df.to_dict(orient='records')}
+        grouped_df.sort_values(by=['direction', 'deviceid', 'bus_stop_no'], inplace=True)
+
+        response = {
+            "data": {
+                "direction-1": [],
+                "direction-2": []
+            }
+        }
+
+        pre_device_id = None,
+        pre_dir = None
+        for index, row in grouped_df.iterrows():
+
+            if pre_device_id == row['deviceid'] and pre_dir == row['direction']:
+                obj = response['data'][f'direction-{int(row["direction"])}'][-1]
+                new_one = False
+            else:
+                obj = {
+                    "driverId": row['deviceid'],
+                    "dwellTimes": []
+                }
+                new_one = True
+            obj['dwellTimes'].append({
+                "bus_stop_no": row['bus_stop_no'],
+                "average_dwell_time": row['average_dwell_time']
+            })
+            if new_one:
+                response['data'][f'direction-{int(row["direction"])}'].append(obj)
+
+            # assigning previous
+            pre_device_id = row['deviceid']
+            pre_dir = row['direction']
+
+        # all averages
+        all_grouped = dwell_times.groupby(['bus_stop', 'direction']).agg(
+            average_dwell_time=('dwell_time_in_seconds', 'mean')
+        ).reset_index()
+
+        # Renaming columns for clarity if necessary
+        all_grouped.columns = ['bus_stop_no', 'direction', 'average_dwell_time']
+
+        all_grouped.sort_values(by=['direction', 'bus_stop_no'], inplace=True)
+
+        print(all_grouped)
+
+        pre_dir = None
+        for index, row in all_grouped.iterrows():
+            if row['direction'] == pre_dir:
+                obj = response['data'][f'direction-{int(row["direction"])}'][-1]
+                new_one = False
+            else:
+                obj = {
+                    "driverId": "all",
+                    "dwellTimes": []
+                }
+                new_one = True
+
+            obj['dwellTimes'].append({
+                "bus_stop_no": row['bus_stop_no'],
+                "average_dwell_time": row['average_dwell_time']
+            })
+
+            if new_one:
+                response['data'][f'direction-{int(row["direction"])}'].append(obj)
+
+            # assigning previous one
+            pre_dir = row['direction']
+
+        return response
 
     def get_dwell_times(self, start_date, end_date):
 
