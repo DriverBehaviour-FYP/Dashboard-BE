@@ -1,29 +1,30 @@
 from app.main.loaders.data_loader import Data
-from config.main_config import AGGRESSIVE, NORMAL, SAFE
 import pandas as pd
 
 
-class AllDriverDwellTime:
+class AllDriverSpeed:
     def __init__(self, version='1000M'):
         self.__version = version
-        self.__dwell_times = Data().get_dwell_times()
+        self.__speed_at_zones = Data().get_speed_at_zones()
         self.__metadata_f_file = Data().get_metadata()
         self.__data = None
         self.__cache_valid = False
 
-    def __calculate_dwell_times(self, start=None, end=None):
+    def __calculate_speed_at_zones(self, start=None, end=None):
 
         start_date, end_date = self.refine_dates(start, end)
-        dwell_times = self.__dwell_times[(self.__dwell_times['date'] >= start_date) & (self.__dwell_times['date'] <= end_date)]
+        speed_at_zones = self.__speed_at_zones[(self.__speed_at_zones['date'] >= start_date) & (self.__speed_at_zones['date'] <= end_date)]
 
-        grouped_df = dwell_times.groupby(['deviceid', 'bus_stop', 'direction']).agg(
-            average_dwell_time=('dwell_time_in_seconds', 'mean')
+        speed_at_zones = speed_at_zones[speed_at_zones['zone']%1 != 0]
+
+        grouped_df = speed_at_zones.groupby(['deviceid', 'zone', 'direction']).agg(
+            average_dwell_time=('speed', 'mean')
         ).reset_index()
 
         # Renaming columns for clarity if necessary
-        grouped_df.columns = ['deviceid', 'bus_stop_no', 'direction', 'average_dwell_time']
+        grouped_df.columns = ['deviceid', 'zone', 'direction', 'average_speed']
 
-        grouped_df.sort_values(by=['direction', 'deviceid', 'bus_stop_no'], inplace=True)
+        grouped_df.sort_values(by=['direction', 'deviceid', 'zone'], inplace=True)
 
         response = {
             "data": {
@@ -42,12 +43,12 @@ class AllDriverDwellTime:
             else:
                 obj = {
                     "driverId": row['deviceid'],
-                    "dwellTimes": []
+                    "speeds": []
                 }
                 new_one = True
-            obj['dwellTimes'].append({
-                "bus_stop_no": row['bus_stop_no'],
-                "average_dwell_time": row['average_dwell_time']
+            obj['speeds'].append({
+                "zone": row['zone'],
+                "average_speed": row['average_speed']
             })
             if new_one:
                 response['data'][f'direction-{int(row["direction"])}'].append(obj)
@@ -57,14 +58,14 @@ class AllDriverDwellTime:
             pre_dir = row['direction']
 
         # all averages
-        all_grouped = dwell_times.groupby(['bus_stop', 'direction']).agg(
-            average_dwell_time=('dwell_time_in_seconds', 'mean')
+        all_grouped = speed_at_zones.groupby(['zone', 'direction']).agg(
+            average_dwell_time=('speed', 'mean')
         ).reset_index()
 
         # Renaming columns for clarity if necessary
-        all_grouped.columns = ['bus_stop_no', 'direction', 'average_dwell_time']
+        all_grouped.columns = ['zone', 'direction', 'average_speed']
 
-        all_grouped.sort_values(by=['direction', 'bus_stop_no'], inplace=True)
+        all_grouped.sort_values(by=['direction', 'zone'], inplace=True)
 
         # print(all_grouped)
 
@@ -76,13 +77,13 @@ class AllDriverDwellTime:
             else:
                 obj = {
                     "driverId": "all",
-                    "dwellTimes": []
+                    "speeds": []
                 }
                 new_one = True
 
-            obj['dwellTimes'].append({
-                "bus_stop_no": row['bus_stop_no'],
-                "average_dwell_time": row['average_dwell_time']
+            obj['speeds'].append({
+                "zone": row['zone'],
+                "average_speed": row['average_speed']
             })
 
             if new_one:
@@ -93,14 +94,14 @@ class AllDriverDwellTime:
 
         return response
 
-    def get_dwell_times(self, start_date, end_date):
+    def get_speed_at_zones(self, start_date, end_date):
 
         if start_date or end_date:
-            return self.__calculate_dwell_times(start_date, end_date)
+            return self.__calculate_speed_at_zones(start_date, end_date)
         if self.__cache_valid:
             return self.__data
         else:
-            self.__data = self.__calculate_dwell_times()
+            self.__data = self.__calculate_speed_at_zones()
             self.__cache_valid = True
             return self.__data
 

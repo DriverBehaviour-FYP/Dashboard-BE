@@ -24,6 +24,7 @@ class Data:
             cls._instance.__bus_terminals = load_and_convert("./data/preprocessed/common/bus_terminals_654.csv")
             cls._instance.__metadata = load_json_path(f'./data/preprocessed/{version}/meta_data_{version}.json')
             cls._instance.__dwellTimes = load_and_convert("./data/preprocessed/common/all_dwell_times.csv")
+            cls._instance.__speed_at_zones = load_and_convert("./data/preprocessed/common/zone_wise_speed.csv")
         return cls._instance
 
     def get_gps_data(self):
@@ -49,3 +50,6 @@ class Data:
 
     def get_dwell_times(self):
         return self.__dwellTimes
+
+    def get_speed_at_zones(self):
+        return self.__speed_at_zones
