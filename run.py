@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Register the API blueprints
 app = register_routes(app)
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5173", "http://localhost:5173"]}})
 
 @app.errorhandler(404)
 def not_found_error(error):

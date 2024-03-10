@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.main.controllers.summary.all_drivers_cache import AllDriverSummary
 from app.main.controllers.summary.all_drivers_metadata_cache import AllDriverMetadata
 from app.main.controllers.summary.all_drivers_dwell_time import AllDriverDwellTime
+from app.main.controllers.summary.all_driver_speed_zones import AllDriverSpeed
 from config.main_config import VERSION
 
 summary_api_blueprint = Blueprint("api/summary", __name__)
@@ -9,10 +10,12 @@ summary_api_blueprint = Blueprint("api/summary", __name__)
 global all_driver_summary
 global all_driver_metadata
 global all_driver_dwell_times
+global all_driver_speed_at_zones
 
 all_driver_summary = AllDriverSummary(version=VERSION)
 all_driver_metadata = AllDriverMetadata(version=VERSION)
 all_driver_dwell_times = AllDriverDwellTime(version=VERSION)
+all_driver_speed_at_zones = AllDriverSpeed(version=VERSION)
 
 
 @summary_api_blueprint.route('/api/alldrivers/summary/', methods=['POST'])
@@ -53,4 +56,18 @@ def get_dwell_times():
     return jsonify({
         'success': True,
         **dwell_times
+    })
+
+
+@summary_api_blueprint.route('/api/alldrivers/speedatzones/', methods=['POST'])
+def get_speed_at_zones():
+    req_body = request.get_json()
+
+    start_date = req_body.get('start-date')
+    end_date = req_body.get('end-date')
+
+    speeds = all_driver_speed_at_zones.get_speed_at_zones(start_date, end_date)
+    return jsonify({
+        'success': True,
+        **speeds
     })
