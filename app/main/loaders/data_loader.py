@@ -25,6 +25,8 @@ class Data:
             cls._instance.__metadata = load_json_path(f'./data/preprocessed/{version}/meta_data_{version}.json')
             cls._instance.__dwellTimes = load_and_convert("./data/preprocessed/common/all_dwell_times.csv")
             cls._instance.__speed_at_zones = load_and_convert("./data/preprocessed/common/zone_wise_speed.csv")
+            cls._instance.__common_metadata = load_json_path(f'./data/preprocessed/common/common_metadata.json')
+
         return cls._instance
 
     def get_gps_data(self):
@@ -53,3 +55,6 @@ class Data:
 
     def get_speed_at_zones(self):
         return self.__speed_at_zones
+
+    def get_common_metadata(self):
+        return self.__common_metadata
