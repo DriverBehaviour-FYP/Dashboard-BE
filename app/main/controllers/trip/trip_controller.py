@@ -14,6 +14,7 @@ class TripController:
         self.__clusterdata = Data().get_clusterdata()
         self.__dwell_times = Data().get_dwell_times()
         self.__speed_at_zones = Data().get_speed_at_zones()
+        self.__common_metadata = Data().get_common_metadata()
 
     def get_trip_metadata(self, trip_id):
         trips = self.__trips_data[self.__trips_data['trip_id'] == trip_id]
@@ -53,12 +54,14 @@ class TripController:
             },
             "acceleration": {
                 "min": 0,
-                "avg": ((segments['average_acceleration'] * (segments['no_acc_points'] - 1)).sum() / ((segments['no_acc_points'] - 1).sum())),
+                "avg": ((segments['average_acceleration'] * (segments['no_acc_points'] - 1)).sum() / (
+                    (segments['no_acc_points'] - 1).sum())),
                 "max": segments['average_acceleration'].max(),
             },
             "de-acceleration": {
                 "min": 0,
-                "avg": ((segments['average_deacceleration'] * (segments['no_deacc_points'] - 1)).sum() / ((segments['no_deacc_points'] - 1).sum())) * -1,
+                "avg": ((segments['average_deacceleration'] * (segments['no_deacc_points'] - 1)).sum() / (
+                    (segments['no_deacc_points'] - 1).sum())) * -1,
                 "max": segments['average_deacceleration'].min() * -1,
             },
             "cluster-summary": {
@@ -76,14 +79,14 @@ class TripController:
         split_points = []
         previous_row = None
         for index, row in gps_data.iterrows():
-            if index == 0 or index == len(gps_data)-1:
+            if index == 0 or index == len(gps_data) - 1:
                 split_points.append({"longitude": row['longitude'], 'latitude': row['latitude']})
             if (previous_row is not None) and row['segment_id'] != previous_row['segment_id']:
                 split_points.append(
                     {
-                        "longitude": (row['longitude'] + previous_row['longitude'])/2,
-                        "latitude": (row['latitude'] + previous_row['latitude'])/ 2,
-                     })
+                        "longitude": (row['longitude'] + previous_row['longitude']) / 2,
+                        "latitude": (row['latitude'] + previous_row['latitude']) / 2,
+                    })
             previous_row = row
             df = pd.DataFrame(split_points)
         return df.to_dict(orient='records')
@@ -132,3 +135,19 @@ class TripController:
             "data": grouped_df.to_dict(orient='records'),
             "success": True
         }
+
+    def get_speed_percentages(self, trip_id):
+        gps_data = self.__gps_data[self.__gps_data['trip_id'] == trip_id]
+
+        gps_data = gps_data[gps_data['speed'] != 0]
+
+        response = {
+            "success": True,
+            "total-length": len(gps_data),
+            'higher-than-3rd-quantile': len(gps_data[gps_data['speed'] >= self.__common_metadata['3rd-quantile']]),
+            'lower-than-1st-quantile': len(gps_data[gps_data['speed'] <= self.__common_metadata['1st-quantile']]),
+        }
+        response['between'] = response['total-length'] - response['higher-than-3rd-quantile'] - response[
+            'lower-than-1st-quantile']
+
+        return response

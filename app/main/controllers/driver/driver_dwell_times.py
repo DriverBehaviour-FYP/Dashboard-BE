@@ -1,6 +1,5 @@
 import pandas as pd
 from app.main.loaders.data_loader import Data
-from config.main_config import AGGRESSIVE, NORMAL, SAFE
 
 
 class DriverDwellTimes:

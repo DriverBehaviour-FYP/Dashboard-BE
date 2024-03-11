@@ -79,3 +79,14 @@ def get_trip_speed_at_zones(trip_id):
         return jsonify(speeds)
     else:
         return make_response(jsonify(speeds), speeds['statusCode'])
+
+
+@trip_api_blueprint.route('/api/trip/speedpercentages/<trip_id>', methods=['GET'])
+def get_trip_speed_percentages(trip_id):
+    trip_id = int(trip_id)
+    speeds = trip_controller.get_speed_percentages(trip_id)
+
+    if speeds['success']:
+        return jsonify(speeds)
+    else:
+        return make_response(jsonify(speeds), speeds['statusCode'])
