@@ -24,7 +24,7 @@ class DriverMetadata:
             return {"success": False, "errorMessage": "Driver not found!", "statusCode": 400}
 
         data = {
-            "success": True,
+            
             "driver-id": driver_id,
             "no-of-trips": len(temp_df),
             "routes": self.__metadata_f_file['routes'],
@@ -35,7 +35,7 @@ class DriverMetadata:
             "selected-end-date": end_date.strftime("%Y-%m-%d")
         }
 
-        return data
+        return {"success": True,"data":data}
 
     def get_driver_metadata(self, driver_id, start_date, end_date):
         return self.__calculate_driver_metadata(driver_id, start_date, end_date)

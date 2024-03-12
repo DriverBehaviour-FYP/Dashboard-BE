@@ -28,7 +28,7 @@ def get_summary():
     summary_data = all_driver_summary.get_summary(start_date, end_date)
     return jsonify({
         'success': True,
-        **summary_data
+        'data':summary_data
     })
 
 
@@ -41,7 +41,7 @@ def get_summary_meta_data():
     metadata = all_driver_metadata.get_metadata(start_date, end_date)
     return jsonify({
         'success': True,
-        **metadata
+        'data':metadata
     })
 
 

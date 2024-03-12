@@ -30,7 +30,7 @@ class DriverSummary:
             return {"success": False, "errorMessage": "Driver not found!", "statusCode": 400}
 
         data = {
-            "success": True,
+           
             "driver_id": driver_id,
             "selected-start-date": start_date.strftime("%Y-%m-%d"),
             "selected-end-date": end_date.strftime("%Y-%m-%d"),
@@ -62,7 +62,7 @@ class DriverSummary:
             "start-date": self.__metadata_f_file['data-collection-start-date'],
             "end-date": self.__metadata_f_file['data-collection-end-date']
         }
-        return data
+        return { "success": True,"data" :data}
 
     def get_driver_summary(self, driver_id, start_date, end_date):
         return self.__calculate_driver_summary(driver_id, start_date, end_date)

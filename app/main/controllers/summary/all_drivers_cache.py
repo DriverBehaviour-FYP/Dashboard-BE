@@ -23,7 +23,6 @@ class AllDriverSummary:
         segments_data = self.__segments_data[(self.__segments_data['date'] >= start_date) & (self.__segments_data['date'] <= end_date)]
 
         data = {
-            "success": True,
             'speed': {
                 'max': gps_data['speed'].max(),
                 'avg': gps_data['speed'].mean()
