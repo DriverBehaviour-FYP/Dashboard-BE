@@ -28,6 +28,7 @@ class DriverMetadata:
             }
 
         data = {
+            "data-present": True,
             "no-of-trips": len(temp_df)
         }
 
