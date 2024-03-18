@@ -60,9 +60,6 @@ class AllDriverSummary:
     def __calculate_summary(self, start=None, end=None):
 
         start_date, end_date = self.refine_dates(start, end)
-        gps_data = self.__gps_data[(self.__gps_data['date'] >= start_date) & (self.__gps_data['date'] <= end_date)]
-        trips_data = self.__trips_data[(self.__trips_data['date'] >= start_date) & (self.__trips_data['date'] <= end_date)]
-        segments_data = self.__segments_data[(self.__segments_data['date'] >= start_date) & (self.__segments_data['date'] <= end_date)]
 
         data = {
             "success": True,
