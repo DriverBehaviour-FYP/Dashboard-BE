@@ -45,7 +45,7 @@ def get_trip_score(device_id):
     trip_scores['trip_id'] = [int(x) for x in trip_scores['trip_id']]
     return jsonify({
         "success": True,
-        **trip_scores
+        "data":trip_scores
     })
 
 
@@ -55,7 +55,7 @@ def get_trip_gps(trip_id):
     trip_behaviour = trip_controller.get_trip_behaviour(trip_id)
     return jsonify({
         "success": True,
-        **trip_behaviour
+        "data":trip_behaviour
     })
 
 

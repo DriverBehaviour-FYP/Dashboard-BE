@@ -89,7 +89,7 @@ class DriverSummary:
             "start-date": self.__metadata_f_file['data-collection-start-date'],
             "end-date": self.__metadata_f_file['data-collection-end-date']
         }
-        return data
+        return { "success": True,"data" :data}
 
     def refine_dates(self, start_date, end_date):
         start_date = pd.to_datetime(start_date) if start_date else pd.to_datetime(self.__metadata_f_file['data-collection-start-date'])

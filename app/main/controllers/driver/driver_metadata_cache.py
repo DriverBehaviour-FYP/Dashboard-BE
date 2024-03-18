@@ -41,7 +41,7 @@ class DriverMetadata:
             return {"success": False, "errorMessage": "Driver not found!", "statusCode": 400}
 
         data = {
-            "success": True,
+            
             "driver-id": driver_id,
             "direction-all": self.__calculate_driver_metadata(driver_id,start_date, end_date, direction=None),
             "direction-1": self.__calculate_driver_metadata(driver_id, start_date, end_date, direction=1),
@@ -54,7 +54,7 @@ class DriverMetadata:
             "selected-end-date": end_date.strftime("%Y-%m-%d")
         }
 
-        return data
+        return {"success": True,"data":data}
 
     def refine_dates(self, start_date, end_date):
         start_date = pd.to_datetime(start_date) if start_date else pd.to_datetime(self.__metadata_f_file['data-collection-start-date'])

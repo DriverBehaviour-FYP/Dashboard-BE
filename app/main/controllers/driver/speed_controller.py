@@ -19,11 +19,12 @@ class DriverSpeedController:
 
         response = {
             "success": True,
+            "data":{
             "total-length": len(gps_data),
             'higher-than-3rd-quantile': len(gps_data[gps_data['speed'] >= self.__common_metadata['3rd-quantile']]),
             'lower-than-1st-quantile': len(gps_data[gps_data['speed'] <= self.__common_metadata['1st-quantile']]),
-        }
-        response['between'] = response['total-length'] - response['higher-than-3rd-quantile'] - response['lower-than-1st-quantile']
+        }}
+        response["data"]['between'] = response["data"]['total-length'] - response["data"]['higher-than-3rd-quantile'] - response["data"]['lower-than-1st-quantile']
 
         return response
 

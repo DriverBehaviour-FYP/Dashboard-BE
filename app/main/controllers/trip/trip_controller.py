@@ -27,7 +27,6 @@ class TripController:
         segments = self.__segments_data[self.__segments_data['trip_id'] == trip_id]
 
         data = {
-            "success": True,
             "trip-id": trip_id,
             "duration": trip['duration'],
             "date": trip['date'].strftime("%Y-%m-%d"),
@@ -36,7 +35,7 @@ class TripController:
             "no-segments": len(segments),
             "routes": self.__metadata_f_file['routes'],
         }
-        return data
+        return { "success": True,"data":data}
 
     def get_trip_summary(self, trip_id):
         segments = self.__segments_data[self.__segments_data['trip_id'] == trip_id]
@@ -46,7 +45,7 @@ class TripController:
             return {"success": False, "errorMessage": "Trip not found!", "statusCode": 400}
 
         data = {
-            "success": True,
+           
             "speed": {
                 "min": 0,
                 "avg": (segments['speed_mean'] * segments['no_data_points']).sum() / (segments['no_data_points'].sum()),
@@ -70,7 +69,7 @@ class TripController:
                 "safe": len(segments[segments['cluster'] == SAFE]),
             }
         }
-        return data
+        return { "success": True,"data":data}
 
     def __calculate_split_points(self, gps_data):
 
@@ -143,11 +142,12 @@ class TripController:
 
         response = {
             "success": True,
+            "data":{
             "total-length": len(gps_data),
             'higher-than-3rd-quantile': len(gps_data[gps_data['speed'] >= self.__common_metadata['3rd-quantile']]),
             'lower-than-1st-quantile': len(gps_data[gps_data['speed'] <= self.__common_metadata['1st-quantile']]),
-        }
-        response['between'] = response['total-length'] - response['higher-than-3rd-quantile'] - response[
+        }}
+        response["data"]['between'] = response["data"]['total-length'] - response["data"]['higher-than-3rd-quantile'] - response["data"][
             'lower-than-1st-quantile']
 
         return response
