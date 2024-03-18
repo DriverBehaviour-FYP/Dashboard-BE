@@ -24,8 +24,17 @@ class AllDriverMetadata:
         }
 
         # calculate no of trips
-        no_of_trips = len(trips_data)
-        data['no-of-trips'] = no_of_trips
+        data['direction-all'] = {
+            "no-of-trips": len(trips_data)
+        }
+
+        data['direction-1'] = {
+            "no-of-trips": len(trips_data[trips_data['direction'] == 1])
+        }
+
+        data['direction-2'] = {
+            "no-of-trips": len(trips_data[trips_data['direction'] == 2])
+        }
 
         # calculate no of different drivers
         no_of_drivers = len(gps_data['deviceid'].unique())
