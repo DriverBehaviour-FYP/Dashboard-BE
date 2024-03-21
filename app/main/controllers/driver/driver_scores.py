@@ -23,13 +23,13 @@ class DriverScore:
         weighted_score = (cluster_counts.apply(lambda row: cluster_scores.get(row['cluster'], 0) * row['count'],
                                                axis=1).sum() / sum(cluster_counts['count']))
         return weighted_score.round(2)
-        # print(f"Device Score: {weighted_score:.2f} out of 100")
 
-    def getScoresOfDrivers(self, start=None, end=None):
+    def score_per_direction(self, start_date, end_date, direction=None):
+        cluster_data = self.__clusterdata[
+            (self.__clusterdata['date'] >= start_date) & (self.__clusterdata['date'] <= end_date)]
 
-        start_date, end_date = self.refine_dates(start, end)
-
-        cluster_data = self.__clusterdata[(self.__clusterdata['date'] >= start_date) & (self.__clusterdata['date'] <= end_date)]
+        if direction:
+            cluster_data = cluster_data[cluster_data['direction'] == direction]
 
         unique_device_ids = cluster_data['deviceid'].unique()
 
@@ -50,8 +50,17 @@ class DriverScore:
         scaledScore = [((x - min_val) / (max_val - min_val) * 100).round(2) for x in output['score']]
 
         output['scaledScores'] = scaledScore
-        output['start-date'] = start_date.strftime("%Y-%m-%d")
-        output['end-date'] = end_date.strftime("%Y-%m-%d")
+        output['deviceid'] = [int(x) for x in output['deviceid']]
+        return output
+
+    def getScoresOfDrivers(self, start=None, end=None):
+
+        start_date, end_date = self.refine_dates(start, end)
+
+        output = {"direction-all": self.score_per_direction(start_date, end_date, direction=None),
+                  "direction-1": self.score_per_direction(start_date, end_date, direction=1),
+                  "direction-2": self.score_per_direction(start_date, end_date, direction=2),
+                  'start-date': start_date.strftime("%Y-%m-%d"), 'end-date': end_date.strftime("%Y-%m-%d")}
         # print(output)
         return output
 

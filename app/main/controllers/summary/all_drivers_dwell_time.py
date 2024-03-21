@@ -11,10 +11,13 @@ class AllDriverDwellTime:
         self.__data = None
         self.__cache_valid = False
 
-    def __calculate_dwell_times(self, start=None, end=None):
+    def __calculate_dwell_times(self, start=None, end=None, drivers=None):
 
         start_date, end_date = self.refine_dates(start, end)
         dwell_times = self.__dwell_times[(self.__dwell_times['date'] >= start_date) & (self.__dwell_times['date'] <= end_date)]
+
+        if drivers is not None:
+            dwell_times = dwell_times[dwell_times['deviceid'].isin(drivers)]
 
         grouped_df = dwell_times.groupby(['deviceid', 'bus_stop', 'direction']).agg(
             average_dwell_time=('dwell_time_in_seconds', 'mean')
@@ -93,10 +96,10 @@ class AllDriverDwellTime:
 
         return response
 
-    def get_dwell_times(self, start_date, end_date):
+    def get_dwell_times(self, start_date, end_date, drivers):
 
-        if start_date or end_date:
-            return self.__calculate_dwell_times(start_date, end_date)
+        if start_date or end_date or ((drivers is not None) and len(drivers) != 0):
+            return self.__calculate_dwell_times(start_date, end_date, drivers)
         if self.__cache_valid:
             return self.__data
         else:

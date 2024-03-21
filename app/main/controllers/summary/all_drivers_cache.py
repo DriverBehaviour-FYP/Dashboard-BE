@@ -15,7 +15,7 @@ class AllDriverSummary:
         self.__data = self.__calculate_summary()
         self.__summary_valid = True
 
-    def __calculate_dir_summary(self, start_date, end_date, direction):
+    def __calculate_dir_summary(self, start_date, end_date, direction, drivers):
         gps_data = self.__gps_data[(self.__gps_data['date'] >= start_date) & (self.__gps_data['date'] <= end_date)]
         trips_data = self.__trips_data[
             (self.__trips_data['date'] >= start_date) & (self.__trips_data['date'] <= end_date)]
@@ -26,6 +26,11 @@ class AllDriverSummary:
             trips_data = trips_data[trips_data['direction'] == direction]
             segments_data = segments_data[segments_data['direction'] == direction]
             gps_data = gps_data[gps_data['direction'] == direction]
+
+        if drivers is not None:
+            trips_data = trips_data[trips_data['deviceid'].isin(drivers)]
+            segments_data = segments_data[segments_data['deviceid'].isin(drivers)]
+            gps_data = gps_data[gps_data['deviceid'].isin(drivers)]
 
         data = {
             'speed': {
@@ -57,15 +62,15 @@ class AllDriverSummary:
         }
         return data
 
-    def __calculate_summary(self, start=None, end=None):
+    def __calculate_summary(self, start=None, end=None, drivers=None):
 
         start_date, end_date = self.refine_dates(start, end)
 
         data = {
             "success": True,
-            "direction-all": self.__calculate_dir_summary(start_date, end_date, direction=None),
-            'direction-1': self.__calculate_dir_summary(start_date, end_date, direction=1),
-            'direction-2': self.__calculate_dir_summary(start_date, end_date, direction=2),
+            "direction-all": self.__calculate_dir_summary(start_date, end_date, direction=None, drivers=drivers),
+            'direction-1': self.__calculate_dir_summary(start_date, end_date, direction=1, drivers=drivers),
+            'direction-2': self.__calculate_dir_summary(start_date, end_date, direction=2, drivers=drivers),
             "selected-start-date": start_date.strftime("%Y-%M-%d"),
             "selected-end-date": end_date.strftime("%Y-%M-%d"),
             "start-date": self.__metadata_f_file['data-collection-start-date'],
@@ -73,10 +78,10 @@ class AllDriverSummary:
         }
         return data
 
-    def get_summary(self, start_date, end_date):
+    def get_summary(self, start_date, end_date, drivers):
 
-        if start_date or end_date:
-            return self.__calculate_summary(start_date, end_date)
+        if start_date or end_date or ((drivers is not None) and len(drivers) != 0):
+            return self.__calculate_summary(start_date, end_date, drivers)
         if self.__summary_valid:
             return self.__data
         else:

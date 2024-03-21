@@ -61,7 +61,7 @@ def get_driver_scores():
     end_date = req_body.get('end-date')
 
     scores = driver_score.getScoresOfDrivers(start_date, end_date)
-    scores['deviceid'] = [int(x) for x in scores['deviceid']]
+    # scores['deviceid'] = [int(x) for x in scores['deviceid']]
     # print(scores)
     return jsonify({ 'success': True,
         'data':scores})
