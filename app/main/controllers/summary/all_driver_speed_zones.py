@@ -10,10 +10,13 @@ class AllDriverSpeed:
         self.__data = None
         self.__cache_valid = False
 
-    def __calculate_speed_at_zones(self, start=None, end=None):
+    def __calculate_speed_at_zones(self, start=None, end=None, drivers=None):
 
         start_date, end_date = self.refine_dates(start, end)
         speed_at_zones = self.__speed_at_zones[(self.__speed_at_zones['date'] >= start_date) & (self.__speed_at_zones['date'] <= end_date)]
+
+        if drivers is not None:
+            speed_at_zones = speed_at_zones[speed_at_zones['deviceid'].isin(drivers)]
 
         speed_at_zones = speed_at_zones[speed_at_zones['zone']%1 != 0]
 
@@ -94,10 +97,10 @@ class AllDriverSpeed:
 
         return response
 
-    def get_speed_at_zones(self, start_date, end_date):
+    def get_speed_at_zones(self, start_date, end_date, drivers):
 
-        if start_date or end_date:
-            return self.__calculate_speed_at_zones(start_date, end_date)
+        if start_date or end_date or ((drivers is not None) and len(drivers) != 0):
+            return self.__calculate_speed_at_zones(start_date, end_date, drivers)
         if self.__cache_valid:
             return self.__data
         else:
