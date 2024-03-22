@@ -75,3 +75,17 @@ def get_speed_at_zones():
         'success': True,
         **speeds
     })
+
+
+@summary_api_blueprint.route('/api/alldrivers/ids/', methods=['POST'])
+def get_all_driver_ids():
+    req_body = request.get_json()
+
+    start_date = req_body.get('start-date')
+    end_date = req_body.get('end-date')
+
+    drivers = all_driver_metadata.get_all_drivers(start_date, end_date)
+    return jsonify({
+        'success': True,
+        'drivers': [int(x) for x in drivers]
+    })

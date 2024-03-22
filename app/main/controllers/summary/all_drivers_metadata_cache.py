@@ -69,3 +69,11 @@ class AllDriverMetadata:
         end_date = pd.to_datetime(end_date) if end_date else pd.to_datetime(
             self.__metadata_f_file['data-collection-end-date'])
         return start_date, end_date
+
+    def get_all_drivers(self, start, end):
+        start_date, end_date = self.refine_dates(start, end)
+
+        trips_data = self.__trips_data[
+            (self.__trips_data['date'] >= start_date) & (self.__trips_data['date'] <= end_date)]
+
+        return trips_data['deviceid'].unique()
