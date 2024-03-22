@@ -29,8 +29,9 @@ def get_driver_summary(driver_id):
 
     start_date = req_body.get('start-date')
     end_date = req_body.get('end-date')
+    trips = req_body.get('trips')
 
-    summary = driver_summary.get_driver_summary(driver_id, start_date, end_date)
+    summary = driver_summary.get_driver_summary(driver_id, start_date, end_date, trips)
 
     if summary['success']:
         return jsonify(summary)
@@ -45,8 +46,9 @@ def get_summary_meta_data(driver_id):
 
     start_date = req_body.get('start-date')
     end_date = req_body.get('end-date')
+    trips = req_body.get('trips')
 
-    metadata = driver_metadata.get_driver_metadata(driver_id, start_date, end_date)
+    metadata = driver_metadata.get_driver_metadata(driver_id, start_date, end_date, trips)
     if metadata['success']:
         return jsonify(metadata)
     else:
@@ -59,12 +61,12 @@ def get_driver_scores():
 
     start_date = req_body.get('start-date')
     end_date = req_body.get('end-date')
+    drivers = req_body.get('drivers')
 
-    scores = driver_score.getScoresOfDrivers(start_date, end_date)
-    # scores['deviceid'] = [int(x) for x in scores['deviceid']]
-    # print(scores)
-    return jsonify({ 'success': True,
-        'data':scores})
+    scores = driver_score.getScoresOfDrivers(start_date, end_date, drivers)
+
+    return jsonify({'success': True,
+                    'data': scores})
 
 
 @driver_api_blueprint.route('/api/driver/dwelltime/<driver_id>', methods=['POST'])
@@ -74,8 +76,9 @@ def get_driver_dwell_times(driver_id):
 
     start_date = req_body.get('start-date')
     end_date = req_body.get('end-date')
+    trips = req_body.get('trips')
 
-    dwell_times = driver_dwell_times.get_driver_dwell_times(driver_id, start_date, end_date)
+    dwell_times = driver_dwell_times.get_driver_dwell_times(driver_id, start_date, end_date, trips)
 
     if dwell_times['success']:
         return jsonify(dwell_times)
@@ -90,8 +93,9 @@ def get_driver_speed_percentages(driver_id):
 
     start_date = req_body.get('start-date')
     end_date = req_body.get('end-date')
+    trips = req_body.get('trips')
 
-    speed_percentages = driver_speed.get_speed_percentages(driver_id, start_date, end_date)
+    speed_percentages = driver_speed.get_speed_percentages(driver_id, start_date, end_date, trips)
 
     if speed_percentages['success']:
         return jsonify(speed_percentages)
@@ -99,3 +103,17 @@ def get_driver_speed_percentages(driver_id):
         return make_response(speed_percentages, speed_percentages['statusCode'])
 
 
+@driver_api_blueprint.route('/api/driver/tripids/<driver_id>', methods=['POST'])
+def get_driver_trip_ids(driver_id):
+    driver_id = int(driver_id)
+    req_body = request.get_json()
+
+    start_date = req_body.get('start-date')
+    end_date = req_body.get('end-date')
+
+    res = driver_metadata.get_trip_ids(driver_id, start_date, end_date)
+
+    if res['success']:
+        return jsonify(res)
+    else:
+        return make_response(res, res['statusCode'])

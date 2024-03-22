@@ -13,7 +13,7 @@ class DriverSummary:
         self.__metadata_f_file = Data().get_metadata()
         self.__metadata_valid = True
 
-    def __calculate_summary(self, driver_id, start_date, end_date, direction=None):
+    def __calculate_summary(self, driver_id, start_date, end_date, direction=None, trips=None):
         trip_data_temp = self.__trips_data[
             (self.__trips_data['deviceid'] == driver_id) & (self.__trips_data['date'] >= start_date) & (
                         self.__trips_data['date'] <= end_date)]
@@ -28,6 +28,11 @@ class DriverSummary:
             trip_data_temp = trip_data_temp[trip_data_temp['direction'] == direction]
             segments_temp = segments_temp[segments_temp['direction'] == direction]
             gps_data_temp = gps_data_temp[gps_data_temp['direction'] == direction]
+
+        if (trips is not None) and len(trips) != 0:
+            trip_data_temp = trip_data_temp[trip_data_temp['trip_id'].isin(trips)]
+            segments_temp = segments_temp[segments_temp['trip_id'].isin(trips)]
+            gps_data_temp = gps_data_temp[gps_data_temp['trip_id'].isin(trips)]
 
         trip_data_temp.reset_index(inplace=True)
         gps_data_temp.reset_index(inplace=True)
@@ -70,7 +75,7 @@ class DriverSummary:
         }
         return data
 
-    def get_driver_summary(self, driver_id, start=None, end=None):
+    def get_driver_summary(self, driver_id, start=None, end=None, trips=None):
 
         # check whether driver id exists
         if not (driver_id in self.__trips_data['deviceid'].unique()):
@@ -83,9 +88,9 @@ class DriverSummary:
             "driver_id": driver_id,
             "selected-start-date": start_date.strftime("%Y-%m-%d"),
             "selected-end-date": end_date.strftime("%Y-%m-%d"),
-            "direction-all": self.__calculate_summary(driver_id, start_date, end_date, direction=None),
-            "direction-1": self.__calculate_summary(driver_id, start_date, end_date, direction=1),
-            "direction-2": self.__calculate_summary(driver_id, start_date, end_date, direction=2),
+            "direction-all": self.__calculate_summary(driver_id, start_date, end_date, direction=None, trips=trips),
+            "direction-1": self.__calculate_summary(driver_id, start_date, end_date, direction=1, trips=trips),
+            "direction-2": self.__calculate_summary(driver_id, start_date, end_date, direction=2, trips=trips),
             "start-date": self.__metadata_f_file['data-collection-start-date'],
             "end-date": self.__metadata_f_file['data-collection-end-date']
         }
