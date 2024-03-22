@@ -24,12 +24,15 @@ class DriverScore:
                                                axis=1).sum() / sum(cluster_counts['count']))
         return weighted_score.round(2)
 
-    def score_per_direction(self, start_date, end_date, direction=None):
+    def score_per_direction(self, start_date, end_date, direction=None, drivers=None):
         cluster_data = self.__clusterdata[
             (self.__clusterdata['date'] >= start_date) & (self.__clusterdata['date'] <= end_date)]
 
         if direction:
             cluster_data = cluster_data[cluster_data['direction'] == direction]
+
+        if (drivers is not None) and len(drivers) != 0:
+            cluster_data = cluster_data[cluster_data['deviceid'].isin(drivers)]
 
         unique_device_ids = cluster_data['deviceid'].unique()
 
@@ -53,13 +56,13 @@ class DriverScore:
         output['deviceid'] = [int(x) for x in output['deviceid']]
         return output
 
-    def getScoresOfDrivers(self, start=None, end=None):
+    def getScoresOfDrivers(self, start=None, end=None, drivers=None):
 
         start_date, end_date = self.refine_dates(start, end)
 
-        output = {"direction-all": self.score_per_direction(start_date, end_date, direction=None),
-                  "direction-1": self.score_per_direction(start_date, end_date, direction=1),
-                  "direction-2": self.score_per_direction(start_date, end_date, direction=2),
+        output = {"direction-all": self.score_per_direction(start_date, end_date, direction=None, drivers=drivers),
+                  "direction-1": self.score_per_direction(start_date, end_date, direction=1, drivers=drivers),
+                  "direction-2": self.score_per_direction(start_date, end_date, direction=2, drivers=drivers),
                   'start-date': start_date.strftime("%Y-%m-%d"), 'end-date': end_date.strftime("%Y-%m-%d")}
         # print(output)
         return output

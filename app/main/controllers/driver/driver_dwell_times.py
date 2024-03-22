@@ -10,10 +10,13 @@ class DriverDwellTimes:
         self.__metadata_f_file = Data().get_metadata()
         self.__metadata_valid = True
 
-    def __calculate_driver_dwell_times(self, driver_id, start=None, end=None):
+    def __calculate_driver_dwell_times(self, driver_id, start=None, end=None, trips=None):
 
         start_date, end_date = self.refine_dates(start, end)
         dwell_times = self.__dwell_times[(self.__dwell_times['deviceid'] == driver_id) & (self.__dwell_times['date'] >= start_date) & (self.__dwell_times['date'] <= end_date)]
+
+        if (trips is not None) and len(trips) != 0:
+            dwell_times = dwell_times[dwell_times['trip_id'].isin(trips)]
 
         grouped_df = dwell_times.groupby(['bus_stop']).agg(
             average_dwell_time=('dwell_time_in_seconds', 'mean')
@@ -27,8 +30,8 @@ class DriverDwellTimes:
             "success": True
         }
 
-    def get_driver_dwell_times(self, driver_id, start_date, end_date):
-        return self.__calculate_driver_dwell_times(driver_id, start_date, end_date)
+    def get_driver_dwell_times(self, driver_id, start_date, end_date, trips):
+        return self.__calculate_driver_dwell_times(driver_id, start_date, end_date, trips)
 
     def refine_dates(self, start_date, end_date):
         start_date = pd.to_datetime(start_date) if start_date else pd.to_datetime(self.__metadata_f_file['data-collection-start-date'])
