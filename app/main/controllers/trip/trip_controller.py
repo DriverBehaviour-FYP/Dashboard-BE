@@ -73,7 +73,7 @@ class TripController:
 
     def __calculate_split_points(self, gps_data):
 
-        gps_data.reset_index(inplace=True)
+        # gps_data.reset_index(inplace=True)
 
         split_points = []
         previous_row = None
@@ -86,21 +86,29 @@ class TripController:
                         "longitude": (row['longitude'] + previous_row['longitude']) / 2,
                         "latitude": (row['latitude'] + previous_row['latitude']) / 2,
                     })
+
             previous_row = row
             df = pd.DataFrame(split_points)
+
         return df.to_dict(orient='records')
 
     def get_trip_behaviour(self, trip_id):
+
         cluster_data = self.__clusterdata[(self.__clusterdata['trip_id'] == trip_id)].reset_index()
+
         gps_data = self.__gps_data[(self.__gps_data['trip_id'] == trip_id)].reset_index()
+
         merged_df = pd.merge(gps_data, cluster_data[['segment_id', 'cluster']], on='segment_id', how='left')
+
         # merged_df['cluster'] = merged_df.groupby('segment_id')['cluster'].ffill()
         gps_data['cluster'] = merged_df['cluster']
+
 
         response = {
             "gps": gps_data.to_dict(orient='records'),
             "split_points": self.__calculate_split_points(gps_data),
         }
+
         return response
 
     def get_trip_dwell_times(self, trip_id):

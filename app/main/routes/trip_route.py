@@ -51,8 +51,11 @@ def get_trip_score(device_id):
 
 @trip_api_blueprint.route('/api/trip/gps/<trip_id>', methods=['GET'])
 def get_trip_gps(trip_id):
+
     trip_id = int(trip_id)
+
     trip_behaviour = trip_controller.get_trip_behaviour(trip_id)
+
     return jsonify({
         "success": True,
         "data":trip_behaviour

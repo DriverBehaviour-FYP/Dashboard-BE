@@ -9,10 +9,12 @@ def load_and_convert(path):
     return data
 
 
+
 class Data:
     _instance = None  # Class variable to store the single instance
 
     def __new__(cls, version='1000M'):
+
         # Create a new instance only if it doesn't exist
         if not cls._instance:
             cls._instance = super().__new__(cls)
