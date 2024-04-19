@@ -93,3 +93,15 @@ def get_trip_speed_percentages(trip_id):
         return jsonify(speeds)
     else:
         return make_response(jsonify(speeds), speeds['statusCode'])
+    
+@trip_api_blueprint.route('/api/trip/realtime/<segment_id>', methods=['GET'])
+def get_trip_realtime(segment_id):
+    segment_id = int(segment_id)
+    print("DebugAssistant - 30")
+    result = trip_controller.get_gps_data_with_cluster_realtime(segment_id)
+    return  result
+    # return result[0]
+    # if gps_data['success']:
+    #     return jsonify(gps_data)
+    # else:
+    #     return make_response(jsonify(gps_data), gps_data['statusCode'])
