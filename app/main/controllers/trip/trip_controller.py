@@ -1,5 +1,7 @@
+import math
 import pandas as pd
 from app.main.loaders.data_loader import Data
+from app.main.loaders.model_loader import loadKmeans
 from config.main_config import AGGRESSIVE, NORMAL, SAFE
 
 
@@ -15,6 +17,9 @@ class TripController:
         self.__dwell_times = Data().get_dwell_times()
         self.__speed_at_zones = Data().get_speed_at_zones()
         self.__common_metadata = Data().get_common_metadata()
+        self.__gps_data_trip_1951 = Data().get_gps_data_trip_1951()
+        self.__section_data_trip_1951 = Data().get_section_data_trip_1951()
+        self.__norms_df = Data().get_norms_df()
 
     def get_trip_metadata(self, trip_id):
         trips = self.__trips_data[self.__trips_data['trip_id'] == trip_id]
@@ -159,3 +164,55 @@ class TripController:
             'lower-than-1st-quantile']
 
         return response
+    
+    def calculate_summary_for_section(self,segments,rs_id):
+        # norms_list = []
+        # for rs_id in segments['road_section_id'].unique():
+        temp_segments = segments[segments['road_section_id'] == rs_id]
+        # FIXME - make sure how mean is calculated (With or without zero values)
+        row = {
+            "road_section_id": rs_id,
+            "speed_mean": (temp_segments['speed_mean'] * temp_segments['no_data_points']).sum() / (temp_segments['no_data_points'].sum()),
+            "speed_std": math.sqrt(((temp_segments['speed_std']**2) * (temp_segments['no_data_points']-1)).sum() / (temp_segments['no_data_points']-1).sum()),
+            "ele_X_speed_p": (temp_segments['ele_X_speed_p'] * (temp_segments['no_data_points']-1)).sum() / (temp_segments['no_data_points']-1).sum(),
+            "ele_X_speed_n": (temp_segments['ele_X_speed_n'] * (temp_segments['no_data_points']-1)).sum() / (temp_segments['no_data_points']-1).sum(),
+            "average_acceleration": (temp_segments['average_acceleration'] * temp_segments['no_acc_points']).sum() / temp_segments['no_acc_points'].sum(),
+            "average_deacceleration": (temp_segments['average_deacceleration'] * temp_segments['no_deacc_points']).sum() / temp_segments['no_deacc_points'].sum(),
+            "std_acc_dacc": math.sqrt(((temp_segments['std_acc_dacc']**2) * (temp_segments['no_acc_points'] + temp_segments['no_deacc_points'] -1)).sum() / (temp_segments['no_acc_points'] + temp_segments['no_deacc_points'] -1).sum()),
+        }
+            # norms_list.append(row)
+        return row
+    
+    def get_gps_data_with_cluster_realtime(self,segment_id):
+        print("DebugAssistant - 0")
+        segments = self.__section_data_trip_1951
+        norms_df = self.__norms_df
+        start_segment_id = 31825
+        result_df = pd.DataFrame()
+
+        for i in range(start_segment_id,segment_id+1):
+            print(i)
+            section_summary = segments[segments['segment_id'] == i]
+            important_cols = ['speed_mean', 'speed_std', 'ele_X_speed_p', 'ele_X_speed_n', 'average_acceleration', 'average_deacceleration', 'std_acc_dacc']
+
+            data = {
+                'segment_id': i,
+            }
+
+            for col in important_cols:
+                data[col] = section_summary[col].values[0] - norms_df.loc[section_summary['road_section_id'],col].values[0]
+
+            wrt_norms_df = pd.DataFrame([data])
+            X = wrt_norms_df.drop(columns = ["segment_id"])
+            model, scaler, pca = loadKmeans(pca=True, scaler=True)
+
+            X_scaled = scaler.transform(X)
+            principal_components = pca.transform(X_scaled)
+            result = model.predict(principal_components)
+            wrt_norms_df = wrt_norms_df.assign(segment_id=i, cluster=result.tolist()[0])
+            merged_data = self.__gps_data_trip_1951.merge(wrt_norms_df[['segment_id', 'cluster']], on='segment_id', how='right')
+            result_df = pd.concat([merged_data,result_df], ignore_index=True)
+        # print(result_df)
+        return result_df.to_dict(orient='records')
+    
+    

@@ -3,3 +3,4 @@
 data/
 **/*.pyc
 .idea/
+/my_project_env

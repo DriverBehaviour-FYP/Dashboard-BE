@@ -28,6 +28,9 @@ class Data:
             cls._instance.__dwellTimes = load_and_convert("./data/preprocessed/common/all_dwell_times.csv")
             cls._instance.__speed_at_zones = load_and_convert("./data/preprocessed/common/zone_wise_speed.csv")
             cls._instance.__common_metadata = load_json_path(f'./data/preprocessed/common/common_metadata.json')
+            cls._instance.__gps_data_trip_1951 = load_and_convert(f'./data/preprocessed/trip_1951-gps.csv')
+            cls._instance.__section_data_trip_1951 = load_and_convert(f'./data/preprocessed/trip_1951-segments.csv')
+            cls._instance.__norms_df = load_and_convert(f'./data/preprocessed/norms_df.csv')
 
         return cls._instance
 
@@ -60,3 +63,12 @@ class Data:
 
     def get_common_metadata(self):
         return self.__common_metadata
+    
+    def get_gps_data_trip_1951(self):
+        return self.__gps_data_trip_1951
+    
+    def get_section_data_trip_1951(self):
+        return self.__section_data_trip_1951
+    
+    def get_norms_df(self):
+        return self.__norms_df
