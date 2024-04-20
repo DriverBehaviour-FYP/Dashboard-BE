@@ -99,7 +99,7 @@ def get_trip_realtime(segment_id):
     segment_id = int(segment_id)
     print("DebugAssistant - 30")
     result = trip_controller.get_gps_data_with_cluster_realtime(segment_id)
-    return  result
+    return  { "data": {"gps":result,"split_points": []} ,  "success": True}
     # return result[0]
     # if gps_data['success']:
     #     return jsonify(gps_data)
