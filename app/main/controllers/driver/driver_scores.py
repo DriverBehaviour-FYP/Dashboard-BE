@@ -50,7 +50,10 @@ class DriverScore:
         min_val = min(output['score'])
         max_val = max(output['score'])
 
-        scaledScore = [((x - min_val) / (max_val - min_val) * 100).round(2) for x in output['score']]
+        if(min_val!=max_val):
+            scaledScore = [((x - min_val) / (max_val - min_val) * 100).round(2) for x in output['score']]
+        else:
+            scaledScore = output['score']
 
         output['scaledScores'] = scaledScore
         output['deviceid'] = [int(x) for x in output['deviceid']]
