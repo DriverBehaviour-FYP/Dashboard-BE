@@ -96,6 +96,8 @@ class TripController:
             df = pd.DataFrame(split_points)
 
         return df.to_dict(orient='records')
+    
+    
 
     def get_trip_behaviour(self, trip_id):
 
@@ -182,6 +184,8 @@ class TripController:
         }
             # norms_list.append(row)
         return row
+    
+    
     
     def get_gps_data_with_cluster_realtime(self,segment_id):
         print("DebugAssistant - 0")

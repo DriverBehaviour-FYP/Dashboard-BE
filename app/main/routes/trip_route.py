@@ -93,13 +93,110 @@ def get_trip_speed_percentages(trip_id):
         return jsonify(speeds)
     else:
         return make_response(jsonify(speeds), speeds['statusCode'])
+
+def get_first_occurrence_coordinates(data):
+        first_occurrences = {}
+        for item in data:
+            segment_id = item.get('segment_id')
+            if segment_id is not None:
+                if segment_id not in first_occurrences:
+                    first_occurrences[segment_id] = {'latitude': item['latitude'], 'longitude': item['longitude']}
+        return list(first_occurrences.values())
+
+def get_last_segment_coordinates(records):
+    last_segment_coordinates = []
+    last_segment_id = None
+    first_record = records[0]
+    first_latitude = first_record.get("latitude")
+    first_longitude = first_record.get("longitude")
+    last_segment_coordinates.append({"latitude": first_latitude, "longitude": first_longitude})
     
+    for record in records:
+        segment_id = record.get("segment_id")
+        latitude = record.get("latitude")
+        longitude = record.get("longitude")
+        
+        if segment_id != last_segment_id:
+            last_segment_coordinates.append({"latitude": latitude, "longitude": longitude})
+            last_segment_id = segment_id
+    
+    return last_segment_coordinates
+   
 @trip_api_blueprint.route('/api/trip/realtime/<segment_id>', methods=['GET'])
 def get_trip_realtime(segment_id):
     segment_id = int(segment_id)
     print("DebugAssistant - 30")
     result = trip_controller.get_gps_data_with_cluster_realtime(segment_id)
-    return  { "data": {"gps":result,"split_points": []} ,  "success": True}
+    return  { "data": {"gps":result,"split_points": [
+            {
+                "latitude": 7.2989833,
+                "longitude": 80.734055
+            },
+            {
+                "latitude": 7.29584995,
+                "longitude": 80.72992825
+            },
+            {
+                "latitude": 7.2924208,
+                "longitude": 80.72279495000001
+            },
+            {
+                "latitude": 7.2854391,
+                "longitude": 80.7223591
+            },
+            {
+                "latitude": 7.285784100000001,
+                "longitude": 80.71553665
+            },
+            {
+                "latitude": 7.287355,
+                "longitude": 80.70896995000001
+            },
+            {
+                "latitude": 7.2839516500000006,
+                "longitude": 80.7018483
+            },
+            {
+                "latitude": 7.2814157999999995,
+                "longitude": 80.6858641
+            },
+            {
+                "latitude": 7.279225,
+                "longitude": 80.6781033
+            },
+            {
+                "latitude": 7.2810925,
+                "longitude": 80.67004990000001
+            },
+            {
+                "latitude": 7.285175000000001,
+                "longitude": 80.66254415
+            },
+            {
+                "latitude": 7.29021245,
+                "longitude": 80.65579579999999
+            },
+            {
+                "latitude": 7.2937224,
+                "longitude": 80.64966495
+            },
+            {
+                "latitude": 7.2908174500000005,
+                "longitude": 80.64516165
+            },
+            {
+                "latitude": 7.2875733,
+                "longitude": 80.64600745
+            },
+            {
+                "latitude": 7.2903633,
+                "longitude": 80.6393933
+            },
+            {
+                "latitude": 7.2916533,
+                "longitude": 80.6352183
+            }
+        ]} ,  "success": True}
     # return result[0]
     # if gps_data['success']:
     #     return jsonify(gps_data)
