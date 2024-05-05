@@ -24,6 +24,7 @@ class TripController:
         self.__section_data_trip_1951 = Data().get_section_data_trip_1951()
         self.__norms_df = Data().get_norms_df()
         self.__lstm = loadForecastingModel(type='lstm')
+        self.__classifier = loadForecastingModel(type='classification')
 
     def get_trip_metadata(self, trip_id):
         trips = self.__trips_data[self.__trips_data['trip_id'] == trip_id]
@@ -191,7 +192,13 @@ class TripController:
     
     def forecast_next_lable(self, start_segment_id, segment_id):
         if segment_id - start_segment_id <= 5:
-            print("Classification Model goes Here")
+            inp = self.__clusterdata[self.__clusterdata['segment_id'] == segment_id]
+
+            inp = inp[['road_section_id','deviceid','direction','day_of_week','hour_of_day']]
+
+            res = self.__classifier.predict(inp)
+
+            return res
         else:
             seg_ids = [i for i in range(start_segment_id,segment_id)]
             segments = self.__clusterdata[self.__clusterdata['segment_id'].isin(seg_ids)]

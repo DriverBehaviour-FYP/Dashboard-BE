@@ -27,3 +27,7 @@ def loadKmeans(pca, scaler):
 def loadForecastingModel(type):
     if type == 'lstm':
         return tf.keras.models.load_model('app/main/models/lstm/lstm_model.h5')
+    if type == 'classification':
+        with open('app/main/models/classification/xgb.pkl', 'rb') as file:
+            model = pickle.load(file)
+        return model

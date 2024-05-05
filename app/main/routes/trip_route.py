@@ -129,7 +129,7 @@ def get_trip_realtime(segment_id):
     result, next_label = trip_controller.get_gps_data_with_cluster_realtime(segment_id)
     return  { "data": {
         "gps": result,
-        "next_label": next_label.tolist()[0],
+        "next_label": int(next_label[0]),
         "split_points": [
             {
                 "latitude": 7.2989833,
