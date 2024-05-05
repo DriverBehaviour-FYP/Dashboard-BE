@@ -1,4 +1,5 @@
 import pickle
+import tensorflow as tf
 
 
 def load(model_name, pca, no_pca_comp, no_classes, scaler):
@@ -22,3 +23,11 @@ def loadKmeans(pca, scaler):
         with open(f'app/main/models/k-means/pca.pkl', 'rb') as file:
             pca = pickle.load(file)
         return model, scaler, pca
+
+def loadForecastingModel(type):
+    if type == 'lstm':
+        return tf.keras.models.load_model('app/main/models/lstm/lstm_model.h5')
+    if type == 'classification':
+        with open('app/main/models/classification/xgb.pkl', 'rb') as file:
+            model = pickle.load(file)
+        return model
