@@ -3,6 +3,9 @@ import pandas as pd
 from app.main.loaders.data_loader import Data
 from app.main.loaders.model_loader import loadKmeans
 from config.main_config import AGGRESSIVE, NORMAL, SAFE
+from app.main.loaders.model_loader import loadForecastingModel
+from keras.utils import to_categorical
+import numpy as np
 
 
 class TripController:
@@ -20,6 +23,7 @@ class TripController:
         self.__gps_data_trip_1951 = Data().get_gps_data_trip_1951()
         self.__section_data_trip_1951 = Data().get_section_data_trip_1951()
         self.__norms_df = Data().get_norms_df()
+        self.__lstm = loadForecastingModel(type='lstm')
 
     def get_trip_metadata(self, trip_id):
         trips = self.__trips_data[self.__trips_data['trip_id'] == trip_id]
@@ -185,6 +189,27 @@ class TripController:
             # norms_list.append(row)
         return row
     
+    def forecast_next_lable(self, start_segment_id, segment_id):
+        if segment_id - start_segment_id <= 5:
+            print("Classification Model goes Here")
+        else:
+            seg_ids = [i for i in range(start_segment_id,segment_id)]
+            segments = self.__clusterdata[self.__clusterdata['segment_id'].isin(seg_ids)]
+
+            for_pred = segments['cluster'].tolist()[-5:]
+
+            # make input to the format that enables feeding to model
+            input = to_categorical([for_pred], num_classes=3)
+            input = input.reshape(1,5,3)
+
+            # predict
+            res = self.__lstm.predict(input, verbose=0)
+
+            # assign lables 
+            predicted_label = np.argmax(res, axis=1)
+
+            return predicted_label
+    
     
     
     def get_gps_data_with_cluster_realtime(self,segment_id):
@@ -193,6 +218,8 @@ class TripController:
         norms_df = self.__norms_df
         start_segment_id = 31825
         result_df = pd.DataFrame()
+
+        next_label = self.forecast_next_lable(start_segment_id, segment_id)
 
         for i in range(start_segment_id,segment_id+1):
             print(i)
@@ -217,6 +244,9 @@ class TripController:
             merged_data = self.__gps_data_trip_1951.merge(wrt_norms_df[['segment_id', 'cluster']], on='segment_id', how='right')
             result_df = pd.concat([merged_data,result_df], ignore_index=True)
         # print(result_df)
-        return result_df.to_dict(orient='records')
+
+        result_dict = result_df.to_dict(orient='records')
+        # print(result_dict)
+        return result_dict, next_label
     
     

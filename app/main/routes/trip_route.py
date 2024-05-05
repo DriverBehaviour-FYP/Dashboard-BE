@@ -126,8 +126,11 @@ def get_last_segment_coordinates(records):
 def get_trip_realtime(segment_id):
     segment_id = int(segment_id)
     print("DebugAssistant - 30")
-    result = trip_controller.get_gps_data_with_cluster_realtime(segment_id)
-    return  { "data": {"gps":result,"split_points": [
+    result, next_label = trip_controller.get_gps_data_with_cluster_realtime(segment_id)
+    return  { "data": {
+        "gps": result,
+        "next_label": next_label.tolist()[0],
+        "split_points": [
             {
                 "latitude": 7.2989833,
                 "longitude": 80.734055
